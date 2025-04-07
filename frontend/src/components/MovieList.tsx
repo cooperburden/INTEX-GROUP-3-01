@@ -8,7 +8,7 @@ function MovieList() {
   const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
 
   useEffect(() => {
-    fetch("http://localhost:5009/api/MovieTitles")
+    fetch("https://localhost:5000/api/MovieTitles")
       .then((res) => res.json())
       .then((data) => {
         setMovies(data);
