@@ -1,19 +1,25 @@
 import { useState } from 'react';
 import { Movie } from '../types/Movie';
-import { updateMovie } from '../api/MoviesAPI';
+import { addMovie } from '../api/MoviesAPI';
 
-interface EditMovieFormProps {
-  movie: Movie;
+interface NewMovieFormProps {
   onSuccess: () => void;
   onCancel: () => void;
 }
 
-const EditMovieForm = ({
-  movie,
-  onSuccess,
-  onCancel,
-}: EditMovieFormProps) => {
-  const [formData, setFormData] = useState<Movie>({ ...movie });
+const NewMovieForm = ({ onSuccess, onCancel }: NewMovieFormProps) => {
+  const [formData, setFormData] = useState<Movie>({
+    showId: '',
+    type: '',
+    title: '',
+    director: '',
+    cast: '',
+    country: '',
+    releaseYear: 0,
+    rating: '',
+    duration: '',
+    description:'',
+  });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -21,13 +27,13 @@ const EditMovieForm = ({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await updateMovie(formData.showId, formData);
+    await addMovie(formData);
     onSuccess();
   };
 
   return (
     <form onSubmit={handleSubmit}>
-      <h2>Edit Movie</h2>
+      <h2>Add New Movie</h2>
       <label>
         Type:
         <input
@@ -101,15 +107,15 @@ const EditMovieForm = ({
         />
       </label>
       <label>
-      Description:
-        <input
-          type="number"
-          name="description"
-          value={formData.description}
-          onChange={handleChange}
-        />
+        Description:
+            <input
+            type="number"
+            name="description"
+            value={formData.description}
+            onChange={handleChange}
+            />
       </label>
-      <button type="submit">Update Movie</button>
+      <button type="submit">Add Movie</button>
       <button type="button" onClick={onCancel}>
         Cancel
       </button>
@@ -117,4 +123,4 @@ const EditMovieForm = ({
   );
 };
 
-export default EditMovieForm;
+export default NewMovieForm;
