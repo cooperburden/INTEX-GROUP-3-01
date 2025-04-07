@@ -31,7 +31,7 @@ const AdminPage = () => {
     loadMovies();
   }, [pageSize, pageNum]);
 
-  const handleDelete = async (showId: number) => {
+  const handleDelete = async (showId: string) => {
     const confirmDelete = window.confirm(
       'Are you sure you want to delete this movie?'
     );
@@ -65,7 +65,7 @@ const AdminPage = () => {
         <NewMovieForm
           onSuccess={() => {
             setShowForm(false);
-            fetchMovies(pageSize, pageNum, [], "asc").then((data) =>
+            fetchMovies(pageSize, pageNum, [], 'asc').then((data) =>
               setMovies(data.movies)
             );
           }}
@@ -92,27 +92,29 @@ const AdminPage = () => {
             <th>Show ID</th>
             <th>Type</th>
             <th>Title</th>
-            <th>Publisher</th>
-            <th>ISBN</th>
-            <th>Classification</th>
-            <th>Category</th>
-            <th>Page Count</th>
-            <th>Price</th>
+            <th>Director</th>
+            <th>Cast</th>
+            <th>Country</th>
+            <th>Release Year</th>
+            <th>Rating</th>
+            <th>Duration</th>
+            <th>Description</th>
             <th></th>
           </tr>
         </thead>
         <tbody>
           {movies.map((m) => (
             <tr key={m.showId}>
-              <td>{b.showId}</td>
-              <td>{b.title}</td>
-              <td>{b.author}</td>
-              <td>{b.publisher}</td>
-              <td>{b.isbn}</td>
-              <td>{b.classification}</td>
-              <td>{b.category}</td>
-              <td>{b.pageCount}</td>
-              <td>{b.price}</td>
+              <td>{m.showId}</td>
+              <td>{m.type}</td>
+              <td>{m.title}</td>
+              <td>{m.director}</td>
+              <td>{m.cast}</td>
+              <td>{m.country}</td>
+              <td>{m.releaseYear}</td>
+              <td>{m.rating}</td>
+              <td>{m.duration}</td>
+              <td>{m.description}</td>
               <td>
                 <button
                   className="btn btn-primary btn-sm w-100 mb-1"
