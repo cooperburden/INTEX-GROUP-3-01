@@ -18,8 +18,19 @@ namespace MoviesIntex.Controllers
         [HttpGet]
         public IActionResult GetAllMovieTitles()
         {
-            var titles = _context.MovieTitles.ToList();
-            return Ok(titles);
+            var titlesWithRatings = _context.MovieTitles
+                .Select(title => new
+                {
+                    title.ShowId,
+                    title.Title,
+                    title.Description,
+                    // ... any other fields you want to include ...
+                    AverageRating = _context.MovieRatings
+                        .Where(r => r.ShowId == title.ShowId)
+                        .Average(r => (double?)r.Rating) ?? 0
+                })
+                .ToList();
+            return Ok(titlesWithRatings);
         }
     }
 }
