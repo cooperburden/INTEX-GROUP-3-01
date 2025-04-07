@@ -11,3 +11,10 @@
 # Datasource local storage ignored files
 /dataSources/
 /dataSources.local.xml
+
+obj/
+bin/
+
+# Ignore build output
+**/bin/
+**/obj/
