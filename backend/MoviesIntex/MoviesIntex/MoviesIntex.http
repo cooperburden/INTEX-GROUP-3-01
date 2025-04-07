@@ -1,0 +1,6 @@
+@MoviesIntex_HostAddress = http://localhost:5009
+
+GET {{MoviesIntex_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
