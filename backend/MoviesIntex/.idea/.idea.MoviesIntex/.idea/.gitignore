@@ -15,3 +15,6 @@
 obj/
 bin/
 
+# Ignore build output
+**/bin/
+**/obj/
