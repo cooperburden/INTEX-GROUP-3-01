@@ -15,41 +15,26 @@ namespace MoviesIntex.Controllers
             _context = context;
         }
 
+       
+
         [HttpGet]
-        public IActionResult GetAllMovieTitles(int pageSize = 5, int pageNum = 1, [FromQuery] List<string>? movieCategories = null, string sortOrder = "asc")
+        public IActionResult GetAllMovieTitles()
         {
-            var query = _context.MovieTitles.AsQueryable();
-
-            if (movieCategories != null && movieCategories.Any())
-            {
-                query = query.AsQueryable().Where(m => movieCategories.Contains(m.Type));
-            }
-
-
-            // Sort by title based on the sortOrder
-            if (sortOrder.ToLower() == "desc")
-            {
-                query = query.OrderByDescending(b => b.Title);
-            }
-            else
-            {
-                query = query.OrderBy(b => b.Title);
-            }
-
-            var something = query
-                .Skip((pageNum - 1) * pageSize)
-                .Take(pageSize)
+            var titlesWithRatings = _context.MovieTitles
+                .Select(title => new
+                {
+                    title.ShowId,
+                    title.Title,
+                    title.Description,
+                    // ... any other fields you want to include ...
+                    AverageRating = _context.MovieRatings
+                        .Where(r => r.ShowId == title.ShowId)
+                        .Average(r => (double?)r.Rating) ?? 0
+                })
                 .ToList();
-
-            var totalNumMovies = query.Count();
-
-            var someObject = new
-            {
-                Movies = something,
-                TotalNumMovies = totalNumMovies
-            };
-
-            return Ok(someObject);
+            return Ok(titlesWithRatings);
+        
+    
         }
 
         [HttpGet("GetMovieCategories")]
@@ -106,19 +91,9 @@ namespace MoviesIntex.Controllers
             _context.SaveChanges();
 
             return NoContent();
-            var titlesWithRatings = _context.MovieTitles
-                .Select(title => new
-                {
-                    title.ShowId,
-                    title.Title,
-                    title.Description,
-                    // ... any other fields you want to include ...
-                    AverageRating = _context.MovieRatings
-                        .Where(r => r.ShowId == title.ShowId)
-                        .Average(r => (double?)r.Rating) ?? 0
-                })
-                .ToList();
-            return Ok(titlesWithRatings);
-        }
+
+
+        
     }
+}
 }
