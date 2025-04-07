@@ -7,13 +7,15 @@ function MovieList() {
   const [genres, setGenres] = useState<string[]>([]);
 
   useEffect(() => {
-    fetch("http://localhost:5009/api/MovieTitles")
+    fetch(
+      "http://localhost:5009/api/MovieTitles?pageSize=5&pageNum=1&sortOrder=asc"
+    )
       .then((res) => res.json())
       .then((data) => {
-        setMovies(data);
+        setMovies(data.movies);
 
-        if (data.length > 0) {
-          const firstMovie = data[0];
+        if (data.movies.length > 0) {
+          const firstMovie = data.movies[0];
           const genreKeys = Object.keys(firstMovie).filter(
             (key) =>
               typeof firstMovie[key] === "number" &&
