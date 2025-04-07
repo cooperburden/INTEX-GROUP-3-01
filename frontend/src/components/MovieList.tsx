@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { Movie } from "./types/Movie";
-import GenreFilter from "./components/GenreFilter"
+import { Movie } from "../types/Movie";
+import GenreFilter from "../components/GenreFilter";
 
 function MovieList() {
   const [movies, setMovies] = useState<Movie[]>([]);
@@ -11,24 +11,24 @@ function MovieList() {
       .then((res) => res.json())
       .then((data) => {
         setMovies(data);
-  
+
         if (data.length > 0) {
           const firstMovie = data[0];
-          const genreKeys = Object.keys(firstMovie).filter((key) =>
-            typeof firstMovie[key] === "number" &&
-            (firstMovie[key] === 0 || firstMovie[key] === 1)
+          const genreKeys = Object.keys(firstMovie).filter(
+            (key) =>
+              typeof firstMovie[key] === "number" &&
+              (firstMovie[key] === 0 || firstMovie[key] === 1)
           );
           setGenres(genreKeys);
         }
       })
       .catch((err) => console.error("Error fetching movies:", err));
   }, []);
-  
 
   return (
     <div style={{ display: "flex" }}>
       <GenreFilter genres={genres} />
-  
+
       <div style={{ flexGrow: 1, padding: "1rem 2rem", marginLeft: "4rem" }}>
         <h1>Movies</h1>
         <div style={{ display: "flex", flexWrap: "wrap", gap: "1rem" }}>
@@ -50,7 +50,6 @@ function MovieList() {
       </div>
     </div>
   );
-  
 }
 
 export default MovieList;
