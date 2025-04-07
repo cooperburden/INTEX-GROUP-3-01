@@ -5,6 +5,9 @@ import GenreFilter from "../components/GenreFilter";
 function MovieList() {
   const [movies, setMovies] = useState<Movie[]>([]);
   const [genres, setGenres] = useState<string[]>([]);
+  const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
 
   useEffect(() => {
     fetch(
@@ -27,14 +30,29 @@ function MovieList() {
       .catch((err) => console.error("Error fetching movies:", err));
   }, []);
 
+  const handleGenreChange = (genres: string[]) => {
+    setSelectedGenres(genres);
+  };
+
+  const filteredMovies =
+    selectedGenres.length === 0
+      ? movies
+      : movies.filter((movie) =>
+          selectedGenres.every((genre) => movie[genre as keyof Movie] === 1)
+        );
+
   return (
     <div style={{ display: "flex" }}>
-      <GenreFilter genres={genres} />
+      <GenreFilter
+        genres={genres}
+        selectedGenres={selectedGenres}
+        onGenreChange={handleGenreChange}
+      />
 
       <div style={{ flexGrow: 1, padding: "1rem 2rem", marginLeft: "4rem" }}>
         <h1>Movies</h1>
         <div style={{ display: "flex", flexWrap: "wrap", gap: "1rem" }}>
-          {movies.map((movie) => (
+          {filteredMovies.map((movie) => (
             <div
               key={movie.showId}
               style={{
@@ -46,6 +64,7 @@ function MovieList() {
               }}
             >
               <h3>{movie.title}</h3>
+              <p>Average Rating: ⭐ {movie.averageRating.toFixed(1)}</p>
             </div>
           ))}
         </div>

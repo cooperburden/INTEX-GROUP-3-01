@@ -42,4 +42,8 @@ export interface Movie {
   tvDramas?: number;
   talkShowsTVComedies?: number;
   thrillers?: number;
+
+  averageRating: number;
+
+
 }
