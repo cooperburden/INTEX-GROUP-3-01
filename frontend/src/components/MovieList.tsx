@@ -1,14 +1,11 @@
 import { useEffect, useState } from "react";
-import { Movie } from "./types/Movie";
-import GenreFilter from "./components/GenreFilter"
+import { Movie } from "../types/Movie";
+import GenreFilter from "../components/GenreFilter"
 
 function MovieList() {
   const [movies, setMovies] = useState<Movie[]>([]);
   const [genres, setGenres] = useState<string[]>([]);
   const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize, setPageSize] = useState(10)
-
 
   useEffect(() => {
     fetch("http://localhost:5009/api/MovieTitles")
