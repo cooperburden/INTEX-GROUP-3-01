@@ -78,13 +78,26 @@ namespace MoviesIntex.Controllers
         }
 
         [HttpGet("Admin")]
-        public IActionResult GetMovies(int pageSize = 5, int pageNum = 1, [FromQuery] List<string>? movieCategories = null, string sortOrder = "asc")
+        public IActionResult GetMovies(
+    int pageSize = 5,
+    int pageNum = 1,
+    [FromQuery] List<string>? movieCategories = null,
+    string sortOrder = "asc",
+    string searchQuery = ""  // Add searchQuery as a parameter
+)
         {
             var query = _context.MovieTitles.AsQueryable();
 
+            // Filter by movie categories
             if (movieCategories != null && movieCategories.Any())
             {
-                query = query.AsQueryable().Where(m => movieCategories.Contains(m.Type));
+                query = query.Where(m => movieCategories.Contains(m.Type));
+            }
+
+            // Filter by search query (case-insensitive)
+            if (!string.IsNullOrEmpty(searchQuery))
+            {
+                query = query.Where(m => m.Title.Contains(searchQuery, StringComparison.OrdinalIgnoreCase));
             }
 
             // Sort by title based on the sortOrder
@@ -112,6 +125,7 @@ namespace MoviesIntex.Controllers
 
             return Ok(someObject);
         }
+
 
 
         [HttpGet("GetMovieCategories")]
