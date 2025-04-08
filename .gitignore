@@ -1,0 +1,21 @@
+# .NET build stuff
+bin/
+obj/
+*.user
+*.suo
+*.cache
+*.log
+*.dbmdl
+*.vs/
+
+# Node / React
+node_modules/
+dist/
+build/
+.env
+
+# OS / Editor junk
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
