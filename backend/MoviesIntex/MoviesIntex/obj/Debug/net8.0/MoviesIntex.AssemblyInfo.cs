@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("MoviesIntex")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+e4f64f930c4879dab636c4f13fdc8bc1e8ce7ccf")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+6a6b3a1e54ece371a4ca45a8130e090409d0c5d6")]
 [assembly: System.Reflection.AssemblyProductAttribute("MoviesIntex")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MoviesIntex")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
