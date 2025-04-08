@@ -14,11 +14,13 @@ const AdminPage = () => {
   const [totalPages, setTotalPages] = useState<number>(0);
   const [showForm, setShowForm] = useState(false);
   const [editingMovie, setEditingMovie] = useState<Movie | null>(null);
+  const [searchQuery, setSearchQuery] = useState<string>('');
 
   useEffect(() => {
     const loadMovies = async () => {
+      setLoading(true);
       try {
-        const data = await fetchMovies(pageSize, pageNum, [], 'asc');
+        const data = await fetchMovies(pageSize, pageNum, [], 'asc', searchQuery);
         setMovies(data.movies);
         setTotalPages(Math.ceil(data.totalNumMovies / pageSize));
       } catch (err) {
@@ -29,21 +31,37 @@ const AdminPage = () => {
     };
 
     loadMovies();
-  }, [pageSize, pageNum]);
+  }, [pageSize, pageNum, searchQuery]);
+
+  // Debounced search query handler
+  useEffect(() => {
+    const debounceTimeout = setTimeout(() => {
+      setPageNum(1);  // Reset to page 1 when search query changes
+    }, 500); // 500ms debounce delay
+
+    return () => clearTimeout(debounceTimeout);
+  }, [searchQuery]);
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value); // Update search query state
+  };
+
 
   const handleDelete = async (showId: string) => {
     const confirmDelete = window.confirm(
       'Are you sure you want to delete this movie?'
     );
     if (!confirmDelete) return;
-
+  
     try {
       await deleteMovie(showId);
-      setMovies(movies.filter((m) => m.showId !== m.showId));
+      // Correctly filter out the deleted movie
+      setMovies(movies.filter((m) => m.showId !== showId));
     } catch (error) {
       alert('Failed to delete movie. Please try again.');
     }
   };
+  
 
   const getGenreName = (movie: Movie) => {
     const genreMap: { [key: string]: string } = {
@@ -109,11 +127,21 @@ const AdminPage = () => {
         </button>
       )}
 
+<div className="mb-3">
+        <input
+          type="text"
+          className="form-control"
+          placeholder="Search movies..."
+          value={searchQuery}
+          onChange={handleSearchChange} // Handle search change
+        />
+      </div>
+
       {showForm && (
         <NewMovieForm
           onSuccess={() => {
             setShowForm(false);
-            fetchMovies(pageSize, pageNum, [], 'asc').then((data) =>
+            fetchMovies(pageSize, pageNum, [], 'asc', '').then((data) =>
               setMovies(data.movies)
             );
           }}
@@ -126,7 +154,7 @@ const AdminPage = () => {
           movie={editingMovie}
           onSuccess={() => {
             setEditingMovie(null);
-            fetchMovies(pageSize, pageNum, [], 'asc').then((data) =>
+            fetchMovies(pageSize, pageNum, [], 'asc', '').then((data) =>
               setMovies(data.movies)
             );
           }}
