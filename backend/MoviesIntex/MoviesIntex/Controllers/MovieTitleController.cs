@@ -33,9 +33,44 @@ namespace MoviesIntex.Controllers
                 })
                 .ToList();
             return Ok(titlesWithRatings);
-        
-    
         }
+
+        [HttpGet("Admin")]
+        public IActionResult GetMovies(int pageSize = 5, int pageNum = 1, [FromQuery] List<string>? movieCategories = null, string sortOrder = "asc")
+        {
+            var query = _context.MovieTitles.AsQueryable();
+
+            if (movieCategories != null && movieCategories.Any())
+            {
+                query = query.AsQueryable().Where(m => movieCategories.Contains(m.Type));
+            }
+
+            // Sort by title based on the sortOrder
+            if (sortOrder.ToLower() == "desc")
+            {
+                query = query.OrderByDescending(m => m.Title);
+            }
+            else
+            {
+                query = query.OrderBy(m => m.Title);
+            }
+
+            var something = query
+                .Skip((pageNum - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
+
+            var totalNumMovies = query.Count();
+
+            var someObject = new
+            {
+                Movies = something,
+                TotalNumMovies = totalNumMovies
+            };
+
+            return Ok(someObject);
+        }
+
 
         [HttpGet("GetMovieCategories")]
         public IActionResult GetMovieCategories()
