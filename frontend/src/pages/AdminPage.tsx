@@ -45,6 +45,54 @@ const AdminPage = () => {
     }
   };
 
+  const getGenreName = (movie: Movie) => {
+    const genreMap: { [key: string]: string } = {
+      action: 'Action',
+      adventure: 'Adventure',
+      animeSeriesInternationalTVShows: 'Anime Series / International TV Shows',
+      britishTVShowsDocuseriesInternationalTVShows:
+        'British TV Shows / Docuseries / International TV Shows',
+      children: 'Children',
+      comedies: 'Comedies',
+      comediesDramasInternationalMovies:
+        'Comedies / Dramas / International Movies',
+      comediesInternationalMovies: 'Comedies / International Movies',
+      comediesRomanticMovies: 'Comedies / Romantic Movies',
+      crimeTVShowsDocuseries: 'Crime TV Shows / Docuseries',
+      documentaries: 'Documentaries',
+      documentariesInternationalMovies: 'Documentaries / International Movies',
+      docuseries: 'Docuseries',
+      dramas: 'Dramas',
+      dramasInternationalMovies: 'Dramas / International Movies',
+      dramasRomanticMovies: 'Dramas / Romantic Movies',
+      familyMovies: 'Family Movies',
+      fantasy: 'Fantasy',
+      horrorMovies: 'Horror Movies',
+      internationalMoviesThrillers: 'International Movies / Thrillers',
+      internationalTVShowsRomanticTVShowsTVDramas:
+        'International TV Shows / Romantic TV Shows / TV Dramas',
+      kidsTV: 'Kids TV',
+      languageTVShows: 'Language TV Shows',
+      musicals: 'Musicals',
+      natureTV: 'Nature TV',
+      realityTV: 'Reality TV',
+      spirituality: 'Spirituality',
+      tvAction: 'TV Action',
+      tvComedies: 'TV Comedies',
+      tvDramas: 'TV Dramas',
+      talkShowsTVComedies: 'Talk Shows / TV Comedies',
+      thrillers: 'Thrillers',
+    };
+
+    for (let genre in genreMap) {
+      // Cast only the specific genre flag in the movie object to number (0 or 1)
+      if ((movie as any)[genre] === 1) {
+        return genreMap[genre];
+      }
+    }
+    return ''; // Return empty string if no genre is selected
+  };
+
   if (loading) return <p>Loading movies...</p>;
   if (error) return <p className="text-red-500">Error: {error}</p>;
 
@@ -99,6 +147,7 @@ const AdminPage = () => {
             <th>Rating</th>
             <th>Duration</th>
             <th>Description</th>
+            <th>Genre</th>
             <th></th>
           </tr>
         </thead>
@@ -115,6 +164,7 @@ const AdminPage = () => {
               <td>{m.rating}</td>
               <td>{m.duration}</td>
               <td>{m.description}</td>
+              <td>{getGenreName(m)}</td>
               <td>
                 <button
                   className="btn btn-primary btn-sm w-100 mb-1"
