@@ -22,6 +22,7 @@ namespace MoviesIntex.Controllers
         public IActionResult GetAllMovieTitles()
         {
             var titlesWithRatings = _context.MovieTitles
+                .ToList() // brings data into memory, allowing LINQ-to-Objects
                 .Select(title => new
                 {
                     title.ShowId,
@@ -35,11 +36,11 @@ namespace MoviesIntex.Controllers
                     title.Duration,
                     title.Description,
 
-                    AverageRating = _context.MovieRatings
+                    averageRating = _context.MovieRatings
                         .Where(r => r.ShowId == title.ShowId)
                         .Average(r => (double?)r.Rating) ?? 0,
 
-                    // Genre Flags
+                    // Genre flags
                     title.Action,
                     title.Adventure,
                     title.AnimeSeriesInternationalTVShows,
@@ -74,6 +75,7 @@ namespace MoviesIntex.Controllers
                     title.Thrillers
                 })
                 .ToList();
+
             return Ok(titlesWithRatings);
         }
 
