@@ -26,15 +26,18 @@ export const fetchMovies = async (
   pageSize: number,
   pageNum: number,
   selectedCategories: string[],
-  sortOrder: string
+  sortOrder: string,
+  searchQuery: string
 ): Promise<FetchMoviesResponse> => {
   try {
     const categoryParams = selectedCategories
       .map((cat) => `movieCategories=${encodeURIComponent(cat)}`)
       .join('&');
 
+    const searchParam = searchQuery ? `&searchQuery=${encodeURIComponent(searchQuery)}` : '';
+
     const response = await fetch(
-      `${API_URL}/Admin?pageSize=${pageSize}&sortOrder=${sortOrder}&pageNum=${pageNum}${selectedCategories.length ? `&${categoryParams}` : ''}`
+      `${API_URL}/Admin?pageSize=${pageSize}&sortOrder=${sortOrder}&pageNum=${pageNum}${selectedCategories.length ? `&${categoryParams}` : ''}${searchParam}`
     );
 
     if (!response.ok) {
