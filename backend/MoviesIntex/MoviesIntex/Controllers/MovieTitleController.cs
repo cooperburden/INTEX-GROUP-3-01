@@ -16,7 +16,6 @@ namespace MoviesIntex.Controllers
         }
 
        
-
         [HttpGet]
         public IActionResult GetAllMovieTitles()
         {
@@ -25,18 +24,61 @@ namespace MoviesIntex.Controllers
                 {
                     title.ShowId,
                     title.Title,
+                    title.Type,
+                    title.Director,
+                    title.Cast,
+                    title.Country,
+                    title.ReleaseYear,
+                    title.Rating,
+                    title.Duration,
                     title.Description,
-                    // ... any other fields you want to include ...
+
                     AverageRating = _context.MovieRatings
                         .Where(r => r.ShowId == title.ShowId)
-                        .Average(r => (double?)r.Rating) ?? 0
+                        .Average(r => (double?)r.Rating) ?? 0,
+
+                    // Genre Flags
+                    title.Action,
+                    title.Adventure,
+                    title.AnimeSeriesInternationalTVShows,
+                    title.BritishTVShowsDocuseriesInternationalTVShows,
+                    title.Children,
+                    title.Comedies,
+                    title.ComediesDramasInternationalMovies,
+                    title.ComediesInternationalMovies,
+                    title.ComediesRomanticMovies,
+                    title.CrimeTVShowsDocuseries,
+                    title.Documentaries,
+                    title.DocumentariesInternationalMovies,
+                    title.Docuseries,
+                    title.Dramas,
+                    title.DramasInternationalMovies,
+                    title.DramasRomanticMovies,
+                    title.FamilyMovies,
+                    title.Fantasy,
+                    title.HorrorMovies,
+                    title.InternationalMoviesThrillers,
+                    title.InternationalTVShowsRomanticTVShowsTVDramas,
+                    title.KidsTV,
+                    title.LanguageTVShows,
+                    title.Musicals,
+                    title.NatureTV,
+                    title.RealityTV,
+                    title.Spirituality,
+                    title.TVAction,
+                    title.TVComedies,
+                    title.TVDramas,
+                    title.TalkShowsTVComedies,
+                    title.Thrillers
                 })
                 .ToList();
-            return Ok(titlesWithRatings);
-        
-    
-        }
 
+            return Ok(titlesWithRatings);
+        }
+        
+        
+        
+        
         [HttpGet("GetMovieCategories")]
         public IActionResult GetMovieCategories()
         {
