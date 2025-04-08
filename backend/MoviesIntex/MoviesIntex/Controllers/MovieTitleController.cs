@@ -36,7 +36,7 @@ namespace MoviesIntex.Controllers
                     title.Duration,
                     title.Description,
 
-                    AverageRating = _context.MovieRatings
+                    averageRating = _context.MovieRatings
                         .Where(r => r.ShowId == title.ShowId)
                         .Average(r => (double?)r.Rating) ?? 0,
 
