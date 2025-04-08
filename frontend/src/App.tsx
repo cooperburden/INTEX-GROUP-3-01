@@ -1,14 +1,19 @@
 
 import './App.css'
 import MovieList from './components/MovieList'
+import AdminPage from './pages/AdminPage'
+import {BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 function App() {
 
   return (
     <>
-    <div>
-      <MovieList />
-    </div>
+    <Router>
+      <Routes>
+        <Route path='/' element={<MovieList />} />
+        <Route path='/admin' element={<AdminPage />} />
+      </Routes>
+    </Router>
     </>
   )
 }

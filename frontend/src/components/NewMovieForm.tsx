@@ -19,6 +19,7 @@ const NewMovieForm = ({ onSuccess, onCancel }: NewMovieFormProps) => {
     rating: '',
     duration: '',
     description:'',
+    averageRating: 0,
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
