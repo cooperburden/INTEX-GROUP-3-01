@@ -7,6 +7,7 @@ namespace MoviesIntex.Data
     public class MovieUser
     {
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Column("user_id")]
         public int UserId { get; set; }
 

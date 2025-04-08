@@ -16,29 +16,39 @@ function Header() {
         <div className="wrapper-right">
 
           {/* User Icon on the right */}
-          <div className="dropdown">
-            <img
-              src="../../public/user-icon-white.svg"
-              alt="User Icon"
-              style={{ width: "50px", height: "60px" }}
-            />
-            {/* Triangle trigger for dropdown */}
-            <img
-              src="../../public/trianglewhite.svg"
-              alt="Dropdown Arrow"
-              className="dropdown-icon"
-              style={{ width: "15px", height: "15px" }}
-            />
+          <div className="dropdown" style={{ position: "relative", display: "inline-block" }}>
+  <img
+    src="../../public/user-icon-white.svg"
+    alt="User Icon"
+    style={{ width: "50px", height: "60px" }}
+  />
 
-            {/* Dropdown menu */}
-            <div className="dropdown-menu">
-              <ul>
-                <li>Profile</li>
-                <li>Settings</li>
-                <li>Logout</li>
-              </ul>
-            </div>
-          </div>
+
+  {/* Hover Dropdown Menu */}
+  <div className="dropdown-menu">
+    <ul>
+      <li>Login</li>
+    </ul>
+  </div>
+
+  {/* 👇 Tooltip under icon */}
+  <div
+    style={{
+      position: "absolute",
+      top: "70px", // slightly below the user icon
+      left: "50%",
+      transform: "translateX(-50%)",
+      fontSize: "0.75rem",
+      color: "white",
+      textAlign: "center",
+      whiteSpace: "nowrap",
+    }}
+  >
+    ↑<br />
+    Have an account? Login here
+  </div>
+</div>
+
         </div>
       </header>
     </>

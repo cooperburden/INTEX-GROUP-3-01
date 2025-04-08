@@ -11,6 +11,8 @@ import Privacy from './pages/Privacy'
 import Search from './pages/Search'
 import {BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
+
+
 function App() {
 
   return (
@@ -26,6 +28,7 @@ function App() {
         <Route path='/movieDetails' element={<MovieDetails />} />
         <Route path='/privacy' element={<Privacy />} />
         <Route path='/search' element={<Search />} />
+        
       </Routes>
     </Router>
     </>
