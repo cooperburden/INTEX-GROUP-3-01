@@ -1,0 +1,25 @@
+/* src/styles/Footer.css */
+footer {
+  background-color: black;
+  color: white;
+  text-align: center;
+  padding: 5px 0; /* Narrow footer */
+  width: 100%; /* Ensure it spans the full width */
+  position: relative; /* Ensure footer stays at the bottom */
+  margin: 0; /* No margin to stick to the bottom of the page */
+}
+
+footer .privacy-link {
+  color: white;
+  cursor: pointer; /* Make it clear that it's clickable */
+  text-decoration: none;
+  transition: all 0.3s ease; /* Smooth transition for color and underline */
+}
+
+footer .privacy-link:hover {
+  text-decoration: underline; /* Adds underline on hover */
+}
+
+footer p {
+  margin: 0;
+}

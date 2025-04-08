@@ -4,6 +4,7 @@ import { deleteMovie, fetchMovies } from '../api/MoviesAPI';
 import Pagination from '../components/Pagination';
 import NewMovieForm from '../components/NewMovieForm';
 import EditMovieForm from '../components/EditMovieForm';
+import Footer from '../components/Footer'
 
 const AdminPage = () => {
   const [movies, setMovies] = useState<Movie[]>([]);
@@ -222,6 +223,7 @@ const AdminPage = () => {
           setPageNum(1);
         }}
       />
+      <Footer />
     </div>
   );
 };

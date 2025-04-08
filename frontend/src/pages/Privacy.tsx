@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import Header from "../components/Header";
+import Footer from "../components/Footer";
 import "../styles/MovieList.css";
 
 const Privacy = () => {
@@ -22,7 +23,7 @@ const Privacy = () => {
       {/* Adjust marginTop dynamically based on headerHeight */}
       <div style={{ marginTop: `${headerHeight}px`, padding: "20px" }}>
         <h1 style={{ textAlign: "center" }}>Privacy Policy for CineNiche</h1> {/* Centering the title */}
-        <p style={{ textAlign: "left" }}><strong>Last updated:</strong> [08 April 2025]</p>
+        <p style={{ textAlign: "left" }}><strong>Last updated:</strong> 08 April 2025</p>
 
         <p style={{ textAlign: "left" }}>
           CineNiche ("we," "us," or "our") is committed to protecting and respecting your privacy.
@@ -128,6 +129,7 @@ const Privacy = () => {
           If you have any questions or concerns about this Privacy Policy or how we handle your personal data, please contact us through our website.
         </p>
       </div>
+      <Footer />
     </>
   );
 };
