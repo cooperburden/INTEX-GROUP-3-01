@@ -1,54 +1,21 @@
-# Ignore all bin and obj folders anywhere in the repo
-**/bin/
-**/obj/
-
-# Ignore build artifacts
-*.dll
-*.exe
-*.app
-*.out
-*.log
-
-# Ignore temporary files
-*.tmp
-*.temp
-*.bak
-*.swp
-
-# Ignore IDE/editor settings
-.vscode/
-.idea/
-*.suo
+# .NET build stuff
+bin/
+obj/
 *.user
-*.userosscache
-*.sln.docstates
+*.suo
+*.cache
+*.log
+*.dbmdl
+*.vs/
 
-# Ignore Node modules (if using Node in frontend/backend)
-**/node_modules/
-
-# Ignore environment files
+# Node / React
+node_modules/
+dist/
+build/
 .env
-.env.*
 
-# Ignore OS-generated files
+# OS / Editor junk
 .DS_Store
 Thumbs.db
-
-# Ignore compiled JS from TypeScript (if applicable)
-**/dist/
-**/build/
-
-# Ignore coverage reports
-coverage/
-*.lcov
-
-# Ignore package managers lockfiles (optional depending on your needs)
-# Uncomment if you want to ignore these
-# package-lock.json
-# yarn.lock
-
-# Ignore Python artifacts (if you’re using Python anywhere)
-__pycache__/
-*.pyc
-*.pyo
-*.pyd
+.idea/
+.vscode/

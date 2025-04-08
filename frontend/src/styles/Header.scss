@@ -1,0 +1,164 @@
+.header {
+  position: fixed; /* Fixes the header relative to the viewport */
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000; /* Ensure the header is on top of other elements */
+  background-color: #000000;
+  padding: 10px 20px;
+  color: white;
+  display: flex;
+  /* justify-content: space-between; */
+  align-items: center;
+  // transition: background-color 0.3s ease-in-out;
+  // &:hover {
+  //   background-color: #fff; // white on hover
+  // }
+}
+
+.wrapper-right {
+  position: relative;
+  display: flex;
+  min-width: 100px;
+  margin-left: auto; /* pushes the container itself to the right */
+}
+.wrapper {
+  position: relative;
+  display: flex;
+  min-width: 100px;
+}
+
+.search-icon {
+  position: absolute;
+  top: 6px;
+  left: 8px;
+  width: 14px;
+}
+
+.clear-icon {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 10px;
+  cursor: pointer;
+  /* visibility: hidden;  */
+}
+.search {
+  border: 1px solid rgb(165, 164, 164);
+  border-radius: 5px;
+  height: 20px;
+  width: 100%;
+  padding: 2px 23px 2px 30px;
+  outline: 0;
+  background-color: #f5f5f5;
+}
+.search:hover,
+.search:focus {
+  border: 1.5px solid #ffffff;
+  background-color: white;
+}
+
+// Define your variables
+$primary: #231c1a;
+$secondary: #534b4b;
+$white: rgb(165, 164, 164);
+$gray: rgb(165, 164, 164);
+
+.form__group {
+  position: relative;
+  width: 50%;
+  /* Add top padding to provide space for the label when it’s overlaid */
+  padding-top: 1.5rem;
+}
+
+.form__field {
+  font-family: inherit;
+  width: 100%;
+  border: none;
+  border-bottom: 2px solid rgb(165, 164, 164);
+  outline: none;
+  font-size: 1.3rem;
+  color: $white;
+  padding: 7px 0em;
+  background: transparent;
+  transition: border-color 0.2s;
+
+  &::placeholder {
+    /* Keep the placeholder text hidden because we’re using the label */
+    color: transparent;
+  }
+}
+
+.form__label {
+  position: absolute;
+  left: 0em;
+  /* Start the label at a comfortable position that overlaps the input text */
+  top: 0.9rem;
+  font-size: 1.3rem;
+  color: rgb(165, 164, 164);
+  pointer-events: none; // so clicks go straight to the input
+  transition: all 0.2s ease-out;
+}
+
+/* When the field is focused or not empty, move the label upward */
+.form__field:focus ~ .form__label,
+.form__field:not(:placeholder-shown) ~ .form__label {
+  top: -0.5rem; // adjust this negative value to move the label as high as you like
+  font-size: 0.7rem;
+  color: rgb(165, 164, 164);
+}
+
+// Existing styles remain ...
+
+/* Dropdown container wraps the triangle and the menu */
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+/* Style for the triangle icon */
+.dropdown-icon {
+  transition: transform 0.3s ease;
+  /* If the triangle is an image, you can set its width/height or leave them inline */
+}
+
+/* Rotate the triangle 180deg on hover */
+.dropdown:hover .dropdown-icon {
+  transform: rotate(180deg);
+}
+
+/* The dropdown menu, hidden by default */
+.dropdown-menu {
+  display: none;
+  position: absolute;
+  top: 100%; /* Position the menu below the triangle */
+  right: 0;
+  background-color: #fff; /* Change as needed */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  padding: 0.5em 0;
+  border-radius: 0.25em;
+  min-width: 100px;
+}
+
+/* Show the menu when the dropdown is hovered */
+.dropdown:hover .dropdown-menu {
+  display: block;
+}
+
+/* Dropdown menu list style */
+.dropdown-menu ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.dropdown-menu ul li {
+  padding: 0.5em 1em;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.dropdown-menu ul li:hover {
+  background-color: #f0f0f0;
+}
