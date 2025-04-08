@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MoviesIntex.Data;
+using System.Linq;
+using System.Collections.Generic;
 
 namespace MoviesIntex.Controllers
 {
@@ -20,6 +22,7 @@ namespace MoviesIntex.Controllers
         public IActionResult GetAllMovieTitles()
         {
             var titlesWithRatings = _context.MovieTitles
+                .ToList() // brings data into memory, allowing LINQ-to-Objects
                 .Select(title => new
                 {
                     title.ShowId,
@@ -37,7 +40,7 @@ namespace MoviesIntex.Controllers
                         .Where(r => r.ShowId == title.ShowId)
                         .Average(r => (double?)r.Rating) ?? 0,
 
-                    // Genre Flags
+                    // Genre flags
                     title.Action,
                     title.Adventure,
                     title.AnimeSeriesInternationalTVShows,
@@ -72,6 +75,7 @@ namespace MoviesIntex.Controllers
                     title.Thrillers
                 })
                 .ToList();
+
             return Ok(titlesWithRatings);
         }
 
