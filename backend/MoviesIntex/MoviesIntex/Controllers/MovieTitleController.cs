@@ -138,6 +138,11 @@ namespace MoviesIntex.Controllers
         {
             var existingMovie = _context.MovieTitles.Find(showId);
 
+            if (existingMovie == null)
+            {
+                return NotFound(new { message = "Movie not found" });
+            }
+
             existingMovie.Type = updateMovie.Type;
             existingMovie.Title = updateMovie.Title;
             existingMovie.Director = updateMovie.Director;
@@ -148,11 +153,47 @@ namespace MoviesIntex.Controllers
             existingMovie.Duration = updateMovie.Duration;
             existingMovie.Description = updateMovie.Description;
 
+            // Update genre flags
+            existingMovie.Action = updateMovie.Action;
+            existingMovie.Adventure = updateMovie.Adventure;
+            existingMovie.AnimeSeriesInternationalTVShows = updateMovie.AnimeSeriesInternationalTVShows;
+            existingMovie.BritishTVShowsDocuseriesInternationalTVShows = updateMovie.BritishTVShowsDocuseriesInternationalTVShows;
+            existingMovie.Children = updateMovie.Children;
+            existingMovie.Comedies = updateMovie.Comedies;
+            existingMovie.ComediesDramasInternationalMovies = updateMovie.ComediesDramasInternationalMovies;
+            existingMovie.ComediesInternationalMovies = updateMovie.ComediesInternationalMovies;
+            existingMovie.ComediesRomanticMovies = updateMovie.ComediesRomanticMovies;
+            existingMovie.CrimeTVShowsDocuseries = updateMovie.CrimeTVShowsDocuseries;
+            existingMovie.Documentaries = updateMovie.Documentaries;
+            existingMovie.DocumentariesInternationalMovies = updateMovie.DocumentariesInternationalMovies;
+            existingMovie.Docuseries = updateMovie.Docuseries;
+            existingMovie.Dramas = updateMovie.Dramas;
+            existingMovie.DramasInternationalMovies = updateMovie.DramasInternationalMovies;
+            existingMovie.DramasRomanticMovies = updateMovie.DramasRomanticMovies;
+            existingMovie.FamilyMovies = updateMovie.FamilyMovies;
+            existingMovie.Fantasy = updateMovie.Fantasy;
+            existingMovie.HorrorMovies = updateMovie.HorrorMovies;
+            existingMovie.InternationalMoviesThrillers = updateMovie.InternationalMoviesThrillers;
+            existingMovie.InternationalTVShowsRomanticTVShowsTVDramas = updateMovie.InternationalTVShowsRomanticTVShowsTVDramas;
+            existingMovie.KidsTV = updateMovie.KidsTV;
+            existingMovie.LanguageTVShows = updateMovie.LanguageTVShows;
+            existingMovie.Musicals = updateMovie.Musicals;
+            existingMovie.NatureTV = updateMovie.NatureTV;
+            existingMovie.RealityTV = updateMovie.RealityTV;
+            existingMovie.Spirituality = updateMovie.Spirituality;
+            existingMovie.TVAction = updateMovie.TVAction;
+            existingMovie.TVComedies = updateMovie.TVComedies;
+            existingMovie.TVDramas = updateMovie.TVDramas;
+            existingMovie.TalkShowsTVComedies = updateMovie.TalkShowsTVComedies;
+            existingMovie.Thrillers = updateMovie.Thrillers;
+
             _context.MovieTitles.Update(existingMovie);
             _context.SaveChanges();
 
             return Ok(existingMovie);
         }
+
+
 
         [HttpDelete("DeleteMovie/{showId}")]
         public IActionResult DeleteMovie(string showId)
