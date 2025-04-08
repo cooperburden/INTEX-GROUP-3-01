@@ -7,26 +7,16 @@
       "RelativeMoniker": "D:0:0:{8DF299DD-29A8-4C02-B3AA-10E5F7A63205}|MoviesIntex\\MoviesIntex.csproj|solutionrelative:moviesintex\\controllers\\movietitlecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-<<<<<<< HEAD
       "AbsoluteMoniker": "D:0:0:{8DF299DD-29A8-4C02-B3AA-10E5F7A63205}|MoviesIntex\\MoviesIntex.csproj|c:\\users\\annay\\onedrive\\documents\\school\\is core\\intex2\\intex-group-3-01\\backend\\moviesintex\\moviesintex\\data\\movietitle.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{8DF299DD-29A8-4C02-B3AA-10E5F7A63205}|MoviesIntex\\MoviesIntex.csproj|solutionrelative:moviesintex\\data\\movietitle.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-=======
->>>>>>> 96a7668276d3ba51e3ab45d531319cbc1057358f
       "AbsoluteMoniker": "D:0:0:{8DF299DD-29A8-4C02-B3AA-10E5F7A63205}|MoviesIntex\\MoviesIntex.csproj|c:\\users\\annay\\onedrive\\documents\\school\\is core\\intex2\\intex-group-3-01\\backend\\moviesintex\\moviesintex\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{8DF299DD-29A8-4C02-B3AA-10E5F7A63205}|MoviesIntex\\MoviesIntex.csproj|solutionrelative:moviesintex\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{8DF299DD-29A8-4C02-B3AA-10E5F7A63205}|MoviesIntex\\MoviesIntex.csproj|c:\\users\\annay\\onedrive\\documents\\school\\is core\\intex2\\intex-group-3-01\\backend\\moviesintex\\moviesintex\\properties\\launchsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
       "RelativeMoniker": "D:0:0:{8DF299DD-29A8-4C02-B3AA-10E5F7A63205}|MoviesIntex\\MoviesIntex.csproj|solutionrelative:moviesintex\\properties\\launchsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
-<<<<<<< HEAD
-=======
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{8DF299DD-29A8-4C02-B3AA-10E5F7A63205}|MoviesIntex\\MoviesIntex.csproj|c:\\users\\annay\\onedrive\\documents\\school\\is core\\intex2\\intex-group-3-01\\backend\\moviesintex\\moviesintex\\data\\movietitle.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{8DF299DD-29A8-4C02-B3AA-10E5F7A63205}|MoviesIntex\\MoviesIntex.csproj|solutionrelative:moviesintex\\data\\movietitle.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
->>>>>>> 96a7668276d3ba51e3ab45d531319cbc1057358f
     }
   ],
   "DocumentGroupContainers": [
@@ -44,11 +34,7 @@
             },
             {
               "$type": "Document",
-<<<<<<< HEAD
               "DocumentIndex": 2,
-=======
-              "DocumentIndex": 1,
->>>>>>> 96a7668276d3ba51e3ab45d531319cbc1057358f
               "Title": "Program.cs",
               "DocumentMoniker": "C:\\Users\\annay\\OneDrive\\Documents\\School\\IS Core\\INTEX2\\INTEX-GROUP-3-01\\backend\\MoviesIntex\\MoviesIntex\\Program.cs",
               "RelativeDocumentMoniker": "MoviesIntex\\Program.cs",
@@ -66,22 +52,14 @@
               "RelativeDocumentMoniker": "MoviesIntex\\Controllers\\MovieTitleController.cs",
               "ToolTip": "C:\\Users\\annay\\OneDrive\\Documents\\School\\IS Core\\INTEX2\\INTEX-GROUP-3-01\\backend\\MoviesIntex\\MoviesIntex\\Controllers\\MovieTitleController.cs",
               "RelativeToolTip": "MoviesIntex\\Controllers\\MovieTitleController.cs",
-<<<<<<< HEAD
-              "ViewState": "AgIAALcAAAAAAAAAAAAYwMIAAAAAAAAAAAAAAA==",
-=======
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAQAAAAhAAAAAAAAAA==",
->>>>>>> 96a7668276d3ba51e3ab45d531319cbc1057358f
+              "ViewState": "AgIAANgAAAAAAAAAAAAAAOcAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-04-07T20:46:33.867Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-<<<<<<< HEAD
               "DocumentIndex": 3,
-=======
-              "DocumentIndex": 2,
->>>>>>> 96a7668276d3ba51e3ab45d531319cbc1057358f
               "Title": "launchSettings.json",
               "DocumentMoniker": "C:\\Users\\annay\\OneDrive\\Documents\\School\\IS Core\\INTEX2\\INTEX-GROUP-3-01\\backend\\MoviesIntex\\MoviesIntex\\Properties\\launchSettings.json",
               "RelativeDocumentMoniker": "MoviesIntex\\Properties\\launchSettings.json",
@@ -93,26 +71,15 @@
             },
             {
               "$type": "Document",
-<<<<<<< HEAD
               "DocumentIndex": 1,
-=======
-              "DocumentIndex": 3,
->>>>>>> 96a7668276d3ba51e3ab45d531319cbc1057358f
               "Title": "MovieTitle.cs",
               "DocumentMoniker": "C:\\Users\\annay\\OneDrive\\Documents\\School\\IS Core\\INTEX2\\INTEX-GROUP-3-01\\backend\\MoviesIntex\\MoviesIntex\\Data\\MovieTitle.cs",
               "RelativeDocumentMoniker": "MoviesIntex\\Data\\MovieTitle.cs",
               "ToolTip": "C:\\Users\\annay\\OneDrive\\Documents\\School\\IS Core\\INTEX2\\INTEX-GROUP-3-01\\backend\\MoviesIntex\\MoviesIntex\\Data\\MovieTitle.cs",
               "RelativeToolTip": "MoviesIntex\\Data\\MovieTitle.cs",
-<<<<<<< HEAD
               "ViewState": "AgIAADUAAAAAAAAAAAAqwGYAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-07T20:53:28.063Z",
-              "EditorCaption": ""
-=======
-              "ViewState": "AgIAAAMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-04-07T20:53:28.063Z"
->>>>>>> 96a7668276d3ba51e3ab45d531319cbc1057358f
             }
           ]
         }
