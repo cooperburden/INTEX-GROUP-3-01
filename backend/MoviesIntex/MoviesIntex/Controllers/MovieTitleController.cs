@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MoviesIntex.Data;
+using System.Linq;
+using System.Collections.Generic;
 
 namespace MoviesIntex.Controllers
 {
