@@ -7,6 +7,21 @@ interface FetchMoviesResponse {
 
 const API_URL = 'https://localhost:5000/api/MovieTitles';
 
+// Fetch all movies (no pagination)
+export const fetchAllMovies = async (): Promise<Movie[]> => {
+  try {
+    const response = await fetch(`${API_URL}`); // Hits the endpoint for all movies
+    if (!response.ok) {
+      throw new Error('Failed to fetch all movies');
+    }
+    return await response.json();
+  } catch (error) {
+    console.error('Error fetching all movies:', error);
+    throw error;
+  }
+};
+
+// Fetch movies with pagination and filters
 export const fetchMovies = async (
   pageSize: number,
   pageNum: number,
@@ -33,6 +48,7 @@ export const fetchMovies = async (
   }
 };
 
+// Add a new movie
 export const addMovie = async (newMovie: Movie): Promise<Movie> => {
   try {
     const response = await fetch(`${API_URL}/AddMovie`, {
@@ -54,6 +70,7 @@ export const addMovie = async (newMovie: Movie): Promise<Movie> => {
   }
 };
 
+// Update an existing movie
 export const updateMovie = async (
   showId: string,
   updatedMovie: Movie
@@ -74,6 +91,7 @@ export const updateMovie = async (
   }
 };
 
+// Delete a movie
 export const deleteMovie = async (showId: string): Promise<void> => {
   try {
     const response = await fetch(`${API_URL}/DeleteMovie/${showId}`, {

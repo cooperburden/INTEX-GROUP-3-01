@@ -27,7 +27,7 @@ const VideoPlayer = () => {
           display: "block",
         }}
       >
-        <source src="/video/vid.mp4" type="video/mp4" />
+        <source src="/video/vid1.mp4" type="video/mp4" />
         Video not supported
       </video>
 
