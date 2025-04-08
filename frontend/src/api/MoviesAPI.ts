@@ -19,7 +19,7 @@ export const fetchMovies = async (
       .join('&');
 
     const response = await fetch(
-      `${API_URL}?pageSize=${pageSize}&sortOrder=${sortOrder}&pageNum=${pageNum}${selectedCategories.length ? `&${categoryParams}` : ''}`
+      `${API_URL}/Admin?pageSize=${pageSize}&sortOrder=${sortOrder}&pageNum=${pageNum}${selectedCategories.length ? `&${categoryParams}` : ''}`
     );
 
     if (!response.ok) {
