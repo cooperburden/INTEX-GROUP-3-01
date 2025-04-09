@@ -5,6 +5,9 @@ import Pagination from '../components/Pagination';
 import NewMovieForm from '../components/NewMovieForm';
 import EditMovieForm from '../components/EditMovieForm';
 import Footer from '../components/Footer';
+import GenreFilter from '../components/GenreFilter';
+import Header from '../components/Header';
+//import "../styles/admin.css"
 
 const AdminPage = () => {
   const [movies, setMovies] = useState<Movie[]>([]);
@@ -17,39 +20,74 @@ const AdminPage = () => {
   const [showForm, setShowForm] = useState(false);
   const [editingMovie, setEditingMovie] = useState<Movie | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>('');
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState<string>(searchQuery);
+  const [headerHeight, setHeaderHeight] = useState<number>(0);
+
+  const allGenres = [
+    'action', 'adventure', 'animeSeriesInternationalTVShows', 'britishTVShowsDocuseriesInternationalTVShows', 
+    'children', 'comedies', 'comediesDramasInternationalMovies', 'comediesInternationalMovies', 
+    'comediesRomanticMovies', 'crimeTVShowsDocuseries', 'documentaries', 'documentariesInternationalMovies', 
+    'docuseries', 'dramas', 'dramasInternationalMovies', 'dramasRomanticMovies', 'familyMovies', 'fantasy', 
+    'horrorMovies', 'internationalMoviesThrillers', 'internationalTVShowsRomanticTVShowsTVDramas', 'kidsTV', 
+    'languageTVShows', 'musicals', 'natureTV', 'realityTV', 'spirituality', 'tvAction', 'tvComedies', 'tvDramas', 
+    'talkShowsTVComedies', 'thrillers'
+  ];
+
+  const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
+
+  useEffect(() => {
+    const timerId = setTimeout(() => {
+      setDebouncedSearchQuery(searchQuery);
+    }, 500);
+    return () => clearTimeout(timerId);
+  }, [searchQuery]);
 
   useEffect(() => {
     const loadMovies = async () => {
       setLoading(true);
       try {
-        const data = await fetchMovies(pageSize, pageNum, [], 'asc', searchQuery);
+        const data = await fetchMovies(pageSize, pageNum, selectedGenres, 'asc', debouncedSearchQuery);
         setMovies(data.movies);
         setTotalPages(Math.ceil(data.totalNumMovies / pageSize));
+        setError(null);
       } catch (err) {
         setError((err as Error).message);
       } finally {
         setLoading(false);
       }
     };
-
+  
     loadMovies();
-  }, [pageSize, pageNum, searchQuery]);
+  }, [pageSize, pageNum, debouncedSearchQuery, selectedGenres]);
 
-  // Filter movies based on the search query locally
   useEffect(() => {
-    if (searchQuery === '') {
-      setFilteredMovies(movies);
-    } else {
-      const lowerCaseSearch = searchQuery.toLowerCase();
-      setFilteredMovies(
-        movies.filter((movie) =>
-          (movie.title?.toLowerCase() || '').includes(lowerCaseSearch) ||
-          (movie.director?.toLowerCase() || '').includes(lowerCaseSearch) ||
-          (movie.country?.toLowerCase() || '').includes(lowerCaseSearch)
-        )
+    // Calculate header height after the component has mounted
+    const header = document.querySelector('.header') as HTMLElement;
+    if (header) {
+      setHeaderHeight(header.offsetHeight);
+    }
+  }, []);
+
+  useEffect(() => {
+    let filtered = movies;
+
+    if (debouncedSearchQuery !== '') {
+      const lowerCaseSearch = debouncedSearchQuery.toLowerCase();
+      filtered = filtered.filter((movie) =>
+        (movie.title?.toLowerCase() || '').includes(lowerCaseSearch) ||
+        (movie.director?.toLowerCase() || '').includes(lowerCaseSearch) ||
+        (movie.country?.toLowerCase() || '').includes(lowerCaseSearch)
       );
     }
-  }, [searchQuery, movies]);
+
+    if (selectedGenres.length > 0) {
+      filtered = filtered.filter((movie) =>
+        selectedGenres.every((genre) => (movie as any)[genre] === 1)
+      );
+    }
+
+    setFilteredMovies(filtered);
+  }, [debouncedSearchQuery, movies, selectedGenres]);
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
@@ -58,7 +96,7 @@ const AdminPage = () => {
   const handleDelete = async (showId: string) => {
     const confirmDelete = window.confirm('Are you sure you want to delete this movie?');
     if (!confirmDelete) return;
-  
+
     try {
       await deleteMovie(showId);
       const updatedMovies = movies.filter((m) => m.showId !== showId);
@@ -114,115 +152,134 @@ const AdminPage = () => {
   };
 
   return (
-    <div>
+    <>
+      <div>
+        <Header /> {/* Sticky header */}
+      </div>
+
+
+    <div className="container-fluid" style={{ marginTop: `${headerHeight}px`, padding: '20px' }}>
       <h1>Admin - Movies</h1>
 
-      {/* This button and search bar remain on screen even during loading */}
+      {error && <p className="text-red-500">Error: {error}</p>}
+
       {!showForm && (
-        <button className="btn btn-success mb-3" onClick={() => setShowForm(true)}>
+        <button className="btn btn-danger mb-3" onClick={() => setShowForm(true)}>
           Add Movie
         </button>
       )}
 
-      <div className="mb-3">
-        <input
-          type="text"
-          className="form-control"
-          placeholder="Search movies..."
-          value={searchQuery}
-          onChange={handleSearchChange}
-        />
-      </div>
-
-      {showForm && (
-        <NewMovieForm
-          onSuccess={() => {
-            setShowForm(false);
-            fetchMovies(pageSize, pageNum, [], 'asc', '').then((data) => setMovies(data.movies));
-          }}
-          onCancel={() => setShowForm(false)}
-        />
-      )}
-
-      {editingMovie && (
-        <EditMovieForm
-          movie={editingMovie}
-          onSuccess={() => {
-            setEditingMovie(null);
-            fetchMovies(pageSize, pageNum, [], 'asc', '').then((data) => setMovies(data.movies));
-          }}
-          onCancel={() => setEditingMovie(null)}
-        />
-      )}
-
-      {/* Render table or loading indicator for movies */}
-      {loading ? (
-        <p>Loading movies...</p>
-      ) : (
-        <>
-          <table className="table table-bordered table-striped">
-            <thead className="table-dark">
-              <tr>
-                <th>Show ID</th>
-                <th>Type</th>
-                <th>Title</th>
-                <th>Director</th>
-                <th>Cast</th>
-                <th>Country</th>
-                <th>Release Year</th>
-                <th>Rating</th>
-                <th>Duration</th>
-                <th>Description</th>
-                <th>Genre</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredMovies.map((m) => (
-                <tr key={m.showId}>
-                  <td>{m.showId}</td>
-                  <td>{m.type}</td>
-                  <td>{m.title}</td>
-                  <td>{m.director}</td>
-                  <td>{m.cast}</td>
-                  <td>{m.country}</td>
-                  <td>{m.releaseYear}</td>
-                  <td>{m.rating}</td>
-                  <td>{m.duration}</td>
-                  <td>{m.description}</td>
-                  <td>{getGenreName(m)}</td>
-                  <td>
-                    <button
-                      className="btn btn-primary btn-sm w-100 mb-1"
-                      onClick={() => setEditingMovie(m)}
-                    >
-                      Edit
-                    </button>
-                    <button
-                      className="btn btn-danger btn-sm w-100"
-                      onClick={() => handleDelete(m.showId)}
-                    >
-                      Delete
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-          <Pagination
-            currentPage={pageNum}
-            totalPages={totalPages}
-            pageSize={pageSize}
-            onPageChange={setPageNum}
-            onPageSizeChange={(newSize) => {
-              setPageSize(newSize);
-              setPageNum(1);
-            }}
+      <div className="row">
+        <div className="col-md-3">
+          {/* Genre filter component */}
+          <GenreFilter
+            genres={allGenres}
+            selectedGenres={selectedGenres}
+            onGenreChange={setSelectedGenres}
           />
-        </>
-      )}
-      <Footer />
+        </div>
+        <div className="col-md-9">
+          <div className="mb-3">
+            <input
+              type="text"
+              className="form-control"
+              placeholder="Search movies..."
+              value={searchQuery}
+              onChange={handleSearchChange}
+            />
+          </div>
+
+          {showForm && (
+            <NewMovieForm
+              onSuccess={() => {
+                setShowForm(false);
+                fetchMovies(pageSize, pageNum, [], 'asc', '').then((data) => setMovies(data.movies));
+              }}
+              onCancel={() => setShowForm(false)}
+            />
+          )}
+
+          {editingMovie && (
+            <EditMovieForm
+              movie={editingMovie}
+              onSuccess={() => {
+                setEditingMovie(null);
+                fetchMovies(pageSize, pageNum, [], 'asc', '').then((data) => setMovies(data.movies));
+              }}
+              onCancel={() => setEditingMovie(null)}
+            />
+          )}
+
+          {loading ? (
+            <p>Loading movies...</p>
+          ) : (
+            <>
+              <div className="table-responsive">
+                <table className="table table-bordered table-striped">
+                  <thead className="table-dark">
+                    <tr>
+                      <th style={{ width: '5%' }}>Type</th>
+                      <th style={{ width: '15%' }}>Title</th>
+                      <th style={{ width: '10%' }}>Director</th>
+                      <th style={{ width: '10%' }}>Cast</th>
+                      <th style={{ width: '10%' }}>Country</th>
+                      <th style={{ width: '5%' }}>Release Year</th>
+                      <th style={{ width: '5%' }}>Rating</th>
+                      <th style={{ width: '5%' }}>Duration</th>
+                      <th style={{ width: '15%' }}>Description</th>
+                      <th style={{ width: '10%' }}>Genre</th>
+                      <th style={{ width: '10%' }}></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {filteredMovies.map((m) => (
+                      <tr key={m.showId}>
+                        <td>{m.type}</td>
+                        <td>{m.title}</td>
+                        <td>{m.director}</td>
+                        <td>{m.cast}</td>
+                        <td>{m.country}</td>
+                        <td>{m.releaseYear}</td>
+                        <td>{m.rating}</td>
+                        <td>{m.duration}</td>
+                        <td>{m.description}</td>
+                        <td>{getGenreName(m)}</td>
+                        <td>
+                          <button
+                            className="btn btn-dark btn-sm w-100 mb-1"
+                            onClick={() => setEditingMovie(m)}
+                          >
+                            Edit
+                          </button>
+                          <button
+                            className="btn btn-danger btn-sm w-100"
+                            onClick={() => handleDelete(m.showId)}
+                          >
+                            Delete
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              <Pagination
+                currentPage={pageNum}
+                totalPages={totalPages}
+                pageSize={pageSize}
+                onPageChange={setPageNum}
+                onPageSizeChange={(newSize) => {
+                  setPageSize(newSize);
+                  setPageNum(1);
+                }}
+              />
+            </>
+          )}
+        </div>
+      </div>
     </div>
+    <Footer />
+    </>
   );
 };
 
