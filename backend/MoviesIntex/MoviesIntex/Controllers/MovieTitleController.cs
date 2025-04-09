@@ -267,5 +267,56 @@ namespace MoviesIntex.Controllers
 
         
     }
+
+    private List<string> GetRecommendedMovieIds(string userId)
+{
+    // TODO: Replace this dummy logic with your actual recommendation model.
+    // For now, assume these are the recommended movie ShowIds.
+    return new List<string> { "s1", "s2", "s3" };
+}
+
+[HttpGet("Recommended")]
+public IActionResult GetRecommendedMovies()
+{
+    // Step 2A. Retrieve the logged-in user's identifier.
+    // If your authentication system stores the user’s identity as a claim, you could access it like this:
+    var userId = User.Identity.Name;
+    
+    // (Optional) If you need to verify that the user is logged in, you can add:
+    if (string.IsNullOrEmpty(userId))
+    {
+        return Unauthorized(new { message = "User is not authenticated." });
+    }
+    
+    // Step 2B. Get the recommended movie IDs using your recommender helper.
+    List<string> recommendedIds = GetRecommendedMovieIds(userId);
+    
+    // Step 2C. Query the database to get the full list of movies.
+    // The following loads movies into memory—if your dataset is large, consider refining this query.
+    var allMovies = _context.MovieTitles.ToList();
+    
+    // Step 2D. Filter the movies based on the recommended movie IDs.
+    var recommendedMovies = allMovies
+        .Where(movie => recommendedIds.Contains(movie.ShowId))
+        .Select(movie => new
+        {
+            movie.ShowId,
+            movie.Title,
+            movie.Type,
+            movie.Director,
+            movie.Cast,
+            movie.Country,
+            movie.ReleaseYear,
+            movie.Rating,
+            movie.Duration,
+            movie.Description
+            // Include any other properties you need
+        })
+        .ToList();
+    
+    // Step 2E. Return the filtered list as JSON.
+    return Ok(new { Recommendations = recommendedMovies });
+}
+
 }
 }
