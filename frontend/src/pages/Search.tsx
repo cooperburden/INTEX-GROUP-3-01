@@ -106,11 +106,35 @@ const SearchPage = () => {
               <div className="row">
                 {filteredMovies.map((movie) => (
                   <div className="col-md-3 mb-4" key={movie.showId}>
-                    <div className="card">
-                      <div className="card-body">
-                        <h5 className="card-title">{movie.title}</h5>
-                      </div>
-                    </div>
+                    <div
+  className="card"
+  style={{
+    backgroundColor: 'black',
+    color: 'white',
+    borderRadius: '0.5rem',
+    overflow: 'hidden',
+    transition: 'transform 0.3s',
+    width: '200px',  // Keeping the same width
+    height: '200px',  // Let the height adjust a bit more, but within a limit
+    maxHeight: '500px',  // Maximum height (just a little more than default)
+  }}
+  onMouseEnter={(e) => (e.currentTarget.style.transform = 'scale(1.05)')}
+  onMouseLeave={(e) => (e.currentTarget.style.transform = 'scale(1.0)')}
+>
+  <div className="card-body" style={{ padding: '1rem' }}>
+    <h5
+      className="card-title"
+      style={{
+        fontSize: '1.2rem',
+        fontWeight: 'bold',
+        wordWrap: 'break-word',
+      }}
+    >
+      {movie.title}
+    </h5>
+  </div>
+</div>
+
                   </div>
                 ))}
               </div>
