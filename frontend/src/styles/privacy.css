@@ -1,4 +1,19 @@
 /* Privacy.css */
+/* Center-align the title */
+h1 {
+    text-align: center;
+  }
+  
+  /* Ensure all other content is left-aligned (this is typically the default, but you can be explicit) */
+  div {
+    text-align: left;
+  }
+  
+  /* Optional: Add some spacing for paragraphs for better readability */
+  p {
+    margin-bottom: 10px; /* Adds space between paragraphs */
+  }
+
 .privacy-container {
     padding: 20px;
     margin-top: var(--header-height); /* Dynamically set from JS */
