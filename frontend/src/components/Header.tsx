@@ -1,4 +1,3 @@
-import React from "react";
 import "../styles/Header.scss";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../AuthContext";
@@ -12,31 +11,46 @@ function Header() {
     navigate("/");
   };
 
+  // Navigate to movie list page
+  const goToMovieList = () => {
+    navigate("/movieList");
+  };
+
+  // Navigate to search page
+  const goToSearch = () => {
+    navigate("/search");
+  };
+
+  // Navigate to account page
+  const goToAccount = () => {
+    navigate("/account");
+  };
+
+  // Navigate to admin page
+  const goToAdmin = () => {
+    navigate("/admin");
+  };
+
   return (
     <>
       <header className="header">
-        {/* Logo on the left */}
-        <img
-          src="/logo.png"
-          alt="Company Logo"
-          style={{ width: "100px", height: "100px" }}
-          className="logo"
-        />
+        {/* Logo and Title (clickable) */}
+        <div className="logo-container" onClick={goToMovieList} style={{ cursor: "pointer" }}>
+          <img
+            src="/logo.png"
+            alt="Company Logo"
+            style={{ width: "100px", height: "100px" }}
+            className="logo"
+          />
+          <h1 className="logo-title">CineNiche</h1>
+        </div>
 
         <div className="wrapper-right">
           <div>
-            {/* <input
-              type="input"
-              className="form__field"
-              placeholder="Search"
-              name="search"
-              id="search"
-              required
-            />
-            <label htmlFor="search" className="form__label">
-              Search
-            </label> */}
-            <button className="magnify-button"></button>
+            {/* Search Button */}
+            <button className="magnify-button" onClick={goToSearch} style={{ cursor: "pointer" }}>
+              {/* Optionally, you can add an icon or text to indicate search here */}
+            </button>
           </div>
 
           {/* User Icon and dropdown menu (only when logged in) */}
@@ -56,8 +70,8 @@ function Header() {
 
               <div className="dropdown-menu">
                 <ul>
-                  <li>Profile</li>
-                  <li>Settings</li>
+                  <li onClick={goToAccount}>Account</li>
+                  <li onClick={goToAdmin}>Admin</li>
                   <li onClick={handleLogout}>Logout</li>
                 </ul>
               </div>
