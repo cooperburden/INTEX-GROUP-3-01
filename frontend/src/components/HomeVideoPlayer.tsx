@@ -1,4 +1,8 @@
+import { useNavigate } from "react-router-dom";
+
 const VideoPlayer = () => {
+  const navigate = useNavigate();
+
     return (
       <div
         style={{
@@ -77,9 +81,7 @@ const VideoPlayer = () => {
               color: "white",
               cursor: "pointer",
             }}
-            onClick={() =>
-              window.scrollTo({ top: window.innerHeight, behavior: "smooth" })
-            }
+            onClick={() => navigate("/createAccount")}
           >
             Create Account
           </button>
