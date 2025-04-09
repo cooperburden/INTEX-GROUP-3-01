@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const states = [
   "AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "FL", "GA",
@@ -18,10 +19,13 @@ const inputStyle = {
 };
 
 const CreateAccountForm = () => {
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     phone: "",
     email: "",
+    password: "",
     age: "",
     gender: "",
     city: "",
@@ -36,10 +40,31 @@ const CreateAccountForm = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Form submitted:", formData);
+    setLoading(true);
 
     try {
-      const response = await fetch("https://localhost:5000/api/Users/AddUser", {
+      // Step 1: Register with Identity
+      const registerResponse = await fetch("https://localhost:5000/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: formData.email,
+          password: formData.password
+        }),
+      });
+
+      if (!registerResponse.ok) {
+        alert("❌ Account creation failed. Please try a different email.");
+        setLoading(false);
+        return;
+      }
+
+      console.log("✅ Identity user registered");
+
+      // Step 2: Add profile to movies_users
+      const profileResponse = await fetch("https://localhost:5000/api/Users/AddUser", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -59,17 +84,17 @@ const CreateAccountForm = () => {
         }),
       });
 
-      if (response.ok) {
-        const user = await response.json();
-        console.log("✅ User created:", user);
-        alert("Account successfully created!");
+      if (profileResponse.ok) {
+        alert("✅ Account created successfully. Please log in.");
+        navigate("/");
       } else {
-        console.error("❌ Failed to create user");
-        alert("Something went wrong. Please try again.");
+        alert("⚠️ Identity created, but failed to save profile.");
       }
     } catch (error) {
       console.error("❌ Error submitting form:", error);
-      alert("Network error. Please try again.");
+      alert("Something went wrong. Try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -86,6 +111,7 @@ const CreateAccountForm = () => {
       <input type="text" name="name" placeholder="Full Name" value={formData.name} onChange={handleChange} required style={inputStyle} />
       <input type="text" name="phone" placeholder="Phone" value={formData.phone} onChange={handleChange} required style={inputStyle} />
       <input type="email" name="email" placeholder="Email" value={formData.email} onChange={handleChange} required style={inputStyle} />
+      <input type="password" name="password" placeholder="Password" value={formData.password} onChange={handleChange} required style={inputStyle} />
       <input type="number" name="age" placeholder="Age" value={formData.age} onChange={handleChange} required style={inputStyle} />
       <input type="text" name="gender" placeholder="Gender" value={formData.gender} onChange={handleChange} required style={inputStyle} />
       <input type="text" name="city" placeholder="City" value={formData.city} onChange={handleChange} required style={inputStyle} />
@@ -101,21 +127,20 @@ const CreateAccountForm = () => {
 
       <button
         type="submit"
+        disabled={loading}
         style={{
           padding: "1rem",
-          backgroundColor: "#e50914",
+          backgroundColor: loading ? "#555" : "#e50914",
           color: "white",
           border: "none",
           borderRadius: "0.25rem",
           fontWeight: "600",
           fontSize: "1.1rem",
-          cursor: "pointer",
+          cursor: loading ? "not-allowed" : "pointer",
           transition: "background-color 0.3s",
         }}
-        onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#f40612")}
-        onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#e50914")}
       >
-        Create Account
+        {loading ? "Creating Account..." : "Create Account"}
       </button>
     </form>
   );
