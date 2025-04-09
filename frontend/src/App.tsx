@@ -13,6 +13,7 @@ import {BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 
 
+
 function App() {
 
   return (
@@ -28,6 +29,7 @@ function App() {
         <Route path='/movieDetails' element={<MovieDetails />} />
         <Route path='/privacy' element={<Privacy />} />
         <Route path='/search' element={<Search />} />
+        {<Route path='/login' element={<Login />} /> }
         
       </Routes>
     </Router>
@@ -35,4 +37,4 @@ function App() {
   )
 }
 
-export default App
+export default App;
