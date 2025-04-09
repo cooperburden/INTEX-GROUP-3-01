@@ -4,6 +4,7 @@ using MoviesIntex.Data;
 using System.Linq;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
+using System.Text.RegularExpressions;
 
 namespace MoviesIntex.Controllers
 {
@@ -12,6 +13,43 @@ namespace MoviesIntex.Controllers
     public class MovieTitlesController : ControllerBase
     {
         private readonly MovieDbContext _context;
+
+        private static readonly Dictionary<string, string> GenreMapping = new(StringComparer.OrdinalIgnoreCase)
+        {
+            { "action", "Action" },
+            { "adventure", "Adventure" },
+            { "animeseriesinternationaltvshows", "Anime Series International TV Shows" },
+            { "britishtvshowsdocuseriesinternationaltvshows", "British TV Shows Docuseries International TV Shows" },
+            { "children", "Children" },
+            { "comedies", "Comedies" },
+            { "comediesdramasinternationalmovies", "Comedies Dramas International Movies" },
+            { "comediesinternationalmovies", "Comedies International Movies" },
+            { "comediesromanticmovies", "Comedies Romantic Movies" },
+            { "crimetvshowsdocuseries", "Crime TV Shows Docuseries" },
+            { "documentaries", "Documentaries" },
+            { "documentariesinternationalmovies", "Documentaries International Movies" },
+            { "docuseries", "Docuseries" },
+            { "dramas", "Dramas" },
+            { "dramasinternationalmovies", "Dramas International Movies" },
+            { "dramasromanticmovies", "Dramas Romantic Movies" },
+            { "familymovies", "Family Movies" },
+            { "fantasy", "Fantasy" },
+            { "horrormovies", "Horror Movies" },
+            { "internationalmoviesthrillers", "International Movies Thrillers" },
+            { "internationaltvshowsromantictvshowstvdramas", "International TV Shows Romantic TV Shows TV Dramas" },
+            { "kidstv", "Kids' TV" },
+            { "languagetvshows", "Language TV Shows" },
+            { "musicals", "Musicals" },
+            { "naturetv", "Nature TV" },
+            { "realitytv", "Reality TV" },
+            { "spirituality", "Spirituality" },
+            { "tvaction", "TV Action" },
+            { "tvcomedies", "TV Comedies" },
+            { "tvdramas", "TV Dramas" },
+            { "talkshowstvcomedies", "Talk Shows TV Comedies" },
+            { "thrillers", "Thrillers" }
+        };
+
 
         public MovieTitlesController(MovieDbContext context)
         {
@@ -81,87 +119,101 @@ namespace MoviesIntex.Controllers
         }
 
         [HttpGet("Admin")]
-        public IActionResult GetMovies(
-        int pageSize = 5,
-        int pageNum = 1,
-        [FromQuery] List<string>? movieCategories = null,
-        string sortOrder = "asc",
-        string searchQuery = ""  // Add searchQuery as a parameter
+public IActionResult GetMovies(
+    int pageSize = 5,
+    int pageNum = 1,
+    [FromQuery] List<string>? movieCategories = null,
+    string sortOrder = "asc",
+    string searchQuery = ""  // Add searchQuery as a parameter
 )
-        {
-            var query = _context.MovieTitles.AsQueryable();
+{
+    var query = _context.MovieTitles.AsQueryable();
 
-            // Filter by movie categories (genre filters)
-            if (movieCategories != null && movieCategories.Any())
+    if (movieCategories != null && movieCategories.Any())
+    {
+        // Mapping dictionary to convert simplified incoming genre strings into the full expected genre names.
+        var genreMapping = GenreMapping;
+
+                // Normalize and map the incoming genre values.
+                // Remove spaces from the incoming value and convert to lowercase as the lookup key.
+        var normalizedGenres = movieCategories
+            .Select(g =>
             {
-                // Dynamically filter by multiple genre columns in the database
+                var key = Regex.Replace(g.ToLower(), @"[^a-z]", ""); // removes all non-letters
+                return genreMapping.ContainsKey(key) ? genreMapping[key] : g;
+            })
+            .ToList();
+
+                // Filter by movie categories (genre filters) using the normalized genres.
                 query = query.Where(m =>
-                    (movieCategories.Contains("Action") && m.Action == 1) ||
-                    (movieCategories.Contains("Adventure") && m.Adventure == 1) ||
-                    (movieCategories.Contains("Anime Series International TV Shows") && m.AnimeSeriesInternationalTVShows == 1) ||
-                    (movieCategories.Contains("British TV Shows Docuseries International TV Shows") && m.BritishTVShowsDocuseriesInternationalTVShows == 1) ||
-                    (movieCategories.Contains("Children") && m.Children == 1) ||
-                    (movieCategories.Contains("Comedies") && m.Comedies == 1) ||
-                    (movieCategories.Contains("Comedies Dramas International Movies") && m.ComediesDramasInternationalMovies == 1) ||
-                    (movieCategories.Contains("Comedies International Movies") && m.ComediesInternationalMovies == 1) ||
-                    (movieCategories.Contains("Comedies Romantic Movies") && m.ComediesRomanticMovies == 1) ||
-                    (movieCategories.Contains("Crime TV Shows Docuseries") && m.CrimeTVShowsDocuseries == 1) ||
-                    (movieCategories.Contains("Documentaries") && m.Documentaries == 1) ||
-                    (movieCategories.Contains("Documentaries International Movies") && m.DocumentariesInternationalMovies == 1) ||
-                    (movieCategories.Contains("Docuseries") && m.Docuseries == 1) ||
-                    (movieCategories.Contains("Dramas") && m.Dramas == 1) ||
-                    (movieCategories.Contains("Dramas International Movies") && m.DramasInternationalMovies == 1) ||
-                    (movieCategories.Contains("Dramas Romantic Movies") && m.DramasRomanticMovies == 1) ||
-                    (movieCategories.Contains("Family Movies") && m.FamilyMovies == 1) ||
-                    (movieCategories.Contains("Fantasy") && m.Fantasy == 1) ||
-                    (movieCategories.Contains("Horror Movies") && m.HorrorMovies == 1) ||
-                    (movieCategories.Contains("International Movies Thrillers") && m.InternationalMoviesThrillers == 1) ||
-                    (movieCategories.Contains("International TV Shows Romantic TV Shows TV Dramas") && m.InternationalTVShowsRomanticTVShowsTVDramas == 1) ||
-                    (movieCategories.Contains("Kids' TV") && m.KidsTV == 1) ||
-                    (movieCategories.Contains("Language TV Shows") && m.LanguageTVShows == 1) ||
-                    (movieCategories.Contains("Musicals") && m.Musicals == 1) ||
-                    (movieCategories.Contains("Nature TV") && m.NatureTV == 1) ||
-                    (movieCategories.Contains("Reality TV") && m.RealityTV == 1) ||
-                    (movieCategories.Contains("Spirituality") && m.Spirituality == 1) ||
-                    (movieCategories.Contains("TV Action") && m.TVAction == 1) ||
-                    (movieCategories.Contains("TV Comedies") && m.TVComedies == 1) ||
-                    (movieCategories.Contains("TV Dramas") && m.TVDramas == 1) ||
-                    (movieCategories.Contains("Talk Shows TV Comedies") && m.TalkShowsTVComedies == 1) ||
-                    (movieCategories.Contains("Thrillers") && m.Thrillers == 1)
-                );
-            }
+            (normalizedGenres.Contains("Action") && m.Action == 1) ||
+            (normalizedGenres.Contains("Adventure") && m.Adventure == 1) ||
+            (normalizedGenres.Contains("Anime Series International TV Shows") && m.AnimeSeriesInternationalTVShows == 1) ||
+            (normalizedGenres.Contains("British TV Shows Docuseries International TV Shows") && m.BritishTVShowsDocuseriesInternationalTVShows == 1) ||
+            (normalizedGenres.Contains("Children") && m.Children == 1) ||
+            (normalizedGenres.Contains("Comedies") && m.Comedies == 1) ||
+            (normalizedGenres.Contains("Comedies Dramas International Movies") && m.ComediesDramasInternationalMovies == 1) ||
+            (normalizedGenres.Contains("Comedies International Movies") && m.ComediesInternationalMovies == 1) ||
+            (normalizedGenres.Contains("Comedies Romantic Movies") && m.ComediesRomanticMovies == 1) ||
+            (normalizedGenres.Contains("Crime TV Shows Docuseries") && m.CrimeTVShowsDocuseries == 1) ||
+            (normalizedGenres.Contains("Documentaries") && m.Documentaries == 1) ||
+            (normalizedGenres.Contains("Documentaries International Movies") && m.DocumentariesInternationalMovies == 1) ||
+            (normalizedGenres.Contains("Docuseries") && m.Docuseries == 1) ||
+            (normalizedGenres.Contains("Dramas") && m.Dramas == 1) ||
+            (normalizedGenres.Contains("Dramas International Movies") && m.DramasInternationalMovies == 1) ||
+            (normalizedGenres.Contains("Dramas Romantic Movies") && m.DramasRomanticMovies == 1) ||
+            (normalizedGenres.Contains("Family Movies") && m.FamilyMovies == 1) ||
+            (normalizedGenres.Contains("Fantasy") && m.Fantasy == 1) ||
+            (normalizedGenres.Contains("Horror Movies") && m.HorrorMovies == 1) ||
+            (normalizedGenres.Contains("International Movies Thrillers") && m.InternationalMoviesThrillers == 1) ||
+            (normalizedGenres.Contains("International TV Shows Romantic TV Shows TV Dramas") && m.InternationalTVShowsRomanticTVShowsTVDramas == 1) ||
+            (normalizedGenres.Contains("Kids' TV") && m.KidsTV == 1) ||
+            (normalizedGenres.Contains("Language TV Shows") && m.LanguageTVShows == 1) ||
+            (normalizedGenres.Contains("Musicals") && m.Musicals == 1) ||
+            (normalizedGenres.Contains("Nature TV") && m.NatureTV == 1) ||
+            (normalizedGenres.Contains("Reality TV") && m.RealityTV == 1) ||
+            (normalizedGenres.Contains("Spirituality") && m.Spirituality == 1) ||
+            (normalizedGenres.Contains("TV Action") && m.TVAction == 1) ||
+            (normalizedGenres.Contains("TV Comedies") && m.TVComedies == 1) ||
+            (normalizedGenres.Contains("TV Dramas") && m.TVDramas == 1) ||
+            (normalizedGenres.Contains("Talk Shows TV Comedies") && m.TalkShowsTVComedies == 1) ||
+            (normalizedGenres.Contains("Thrillers") && m.Thrillers == 1)
+        );
+    }
 
-            // Filter by search query (case-insensitive), now done at the database level
-            if (!string.IsNullOrEmpty(searchQuery))
-            {
-                query = query.Where(m => EF.Functions.Like(m.Title, $"%{searchQuery}%"));
-            }
+    // Filter by search query (case-insensitive) at the database level.
+    if (!string.IsNullOrEmpty(searchQuery))
+    {
+        query = query.Where(m => EF.Functions.Like(m.Title, $"%{searchQuery}%"));
+    }
 
-            // Sort by title based on the sortOrder
-            if (sortOrder.ToLower() == "desc")
-            {
-                query = query.OrderByDescending(m => m.Title);
-            }
-            else
-            {
-                query = query.OrderBy(m => m.Title);
-            }
+    // Sort by title based on sortOrder.
+    if (sortOrder.ToLower() == "desc")
+    {
+        query = query.OrderByDescending(m => m.Title);
+    }
+    else
+    {
+        query = query.OrderBy(m => m.Title);
+    }
 
-            var movies = query
-                .Skip((pageNum - 1) * pageSize)
-                .Take(pageSize)
-                .ToList();
+    var movies = query
+        .Skip((pageNum - 1) * pageSize)
+        .Take(pageSize)
+        .ToList();
 
-            var totalNumMovies = query.Count();
+    var totalNumMovies = query.Count();
 
-            var result = new
-            {
-                Movies = movies,
-                TotalNumMovies = totalNumMovies
-            };
+    var result = new
+    {
+        Movies = movies,
+        TotalNumMovies = totalNumMovies
+    };
 
-            return Ok(result);
-        }
+    return Ok(result);
+}
+
+
 
 
 
