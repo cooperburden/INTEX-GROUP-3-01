@@ -19,13 +19,13 @@ function Header() {
         <img
           src="/logo.png"
           alt="Company Logo"
-          style={{ width: "125px", height: "125px" }}
+          style={{ width: "100px", height: "100px" }}
           className="logo"
         />
 
         <div className="wrapper-right">
           <div>
-            <input
+            {/* <input
               type="input"
               className="form__field"
               placeholder="Search"
@@ -35,7 +35,8 @@ function Header() {
             />
             <label htmlFor="search" className="form__label">
               Search
-            </label>
+            </label> */}
+            <button className="magnify-button"></button>
           </div>
 
           {/* User Icon and dropdown menu (only when logged in) */}

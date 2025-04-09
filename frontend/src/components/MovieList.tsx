@@ -3,117 +3,93 @@ import { Movie } from "../types/Movie";
 import Header from "./Header";
 import "../styles/MovieList.css";
 import VideoPlayer from "./VideoPlayer";
+import CardSlider from "./cardslider";
 
 function MovieList() {
   const [movies, setMovies] = useState<Movie[]>([]);
-  const [genres, setGenres] = useState<string[]>([]);
-  const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
 
   useEffect(() => {
+    // Temporarily set fake data
+    const fakeMovies: Movie[] = [
+      {
+        movieId: 1,
+        title: "The Matrix",
+        category: "Action",
+        year: 1999,
+        director: "The Wachowskis",
+        rating: "R",
+        edited: false,
+      },
+      {
+        movieId: 2,
+        title: "Inception",
+        category: "Sci-Fi",
+        year: 2010,
+        director: "Christopher Nolan",
+        rating: "PG-13",
+        edited: false,
+      },
+      {
+        movieId: 3,
+        title: "Interstellar",
+        category: "Drama",
+        year: 2014,
+        director: "Christopher Nolan",
+        rating: "PG-13",
+        edited: false,
+      },
+    ];
+    setMovies(fakeMovies);
+
+    // Uncomment this to use the real API
+    /*
     fetch("https://localhost:5000/api/MovieTitles")
-      .then((res) => res.json())
+      .then((res) => {
+        if (!res.ok) throw new Error("API request failed");
+        return res.json();
+      })
       .then((data) => {
         setMovies(data);
-        if (data.length > 0) {
-          const firstMovie = data[0];
-          const genreKeys = Object.keys(firstMovie).filter(
-            (key) =>
-              typeof firstMovie[key] === "number" &&
-              (firstMovie[key] === 0 || firstMovie[key] === 1)
-          );
-          setGenres(genreKeys);
-        }
-      })
-      .catch((err) => console.error("Error fetching movies:", err));
+      });
+    */
   }, []);
 
-  const handleGenreChange = (genres: string[]) => {
-    setSelectedGenres(genres);
-  };
-
-  const filteredMovies =
-    selectedGenres.length === 0
-      ? movies
-      : movies.filter((movie) =>
-          selectedGenres.every((genre) => movie[genre as keyof Movie] === 1)
-        );
-
   return (
-    <div
-      style={{
-        position: "relative",
-        width: "100vw",
-        // height: "100vh",
-        overflowY: "auto", // Vertical scroll for page
-        overflowX: "hidden",
-      }}
-    >
-      <div style={{ position: "sticky", top: 0, zIndex: 20 }}>
-        <Header /> {/* Sticky header */}
+    <div className="page-wrapper">
+      {/* Header */}
+      <div className="header-wrapper">
+        <Header />
       </div>
 
-      <div
-        style={{
-          position: "relative",
-          zIndex: 10,
-          padding: "5rem 1rem",
-          backgroundColor: "#white",
-        }}
-      >
-        <VideoPlayer /> {/* Video below header */}
-      </div>
+      {/* Video Player */}
       <div>
-        <main
-          style={{
-            display: "flex",
-            position: "relative",
-            zIndex: 0,
-            gap: "1rem",
-            overflowX: "auto",
-            padding: "45rem",
-            scrollSnapType: "x mandatory",
-          }}
-        >
-          {filteredMovies.map((movie) => {
-            const fullStars = Math.floor(movie.averageRating);
-            const hasHalfStar = movie.averageRating % 1 >= 0.5;
-            const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
+        <div className="video-wrapper">
+          <VideoPlayer />
+        </div>
+        <div className="container">
+          <CardSlider />
+        </div>
 
-            return (
-              <div
-                key={movie.showId}
-                style={{
-                  flex: "0 0 auto",
-                  width: "200px",
-                  border: "1px solid #ccc",
-                  borderRadius: "0.5rem",
-                  padding: "1rem",
-                  backgroundColor: "black",
-                  color: "white",
-                  scrollSnapAlign: "start",
-                  overflowX: "auto",
-                }}
-              >
-                <h3 style={{ fontWeight: "600" }}>{movie.title}</h3>
-
-                {/* ⭐ Star display */}
-                <div style={{ fontSize: "1.2rem", margin: "0.5rem 0" }}>
-                  {Array.from({ length: fullStars }).map((_, i) => (
-                    <span key={`full-${i}`}>⭐</span>
-                  ))}
-                  {hasHalfStar && <span key="half">⭐½</span>}
-                  {Array.from({ length: emptyStars }).map((_, i) => (
-                    <span key={`empty-${i}`}>☆</span>
-                  ))}
-                </div>
-
-                {/* <p style={{ fontSize: "0.9rem", color: "#aaa" }}>
-                  Average Rating: {movie.averageRating.toFixed(1)}
-                </p> */}
-              </div>
-            );
-          })}
-        </main>
+        {/* This container should appear below the video */}
+        {/* <div className="container">
+        {movies.map((movie) => (
+          <div className="card" key={movie.movieId}>
+            <h3>{movie.title}</h3>
+            <p>
+              <strong>Director:</strong> {movie.director}
+            </p>
+            <p>
+              <strong>Category:</strong> {movie.category}
+            </p>
+            <p>
+              <strong>Year:</strong> {movie.year}
+            </p>
+            <p>
+              <strong>Rating:</strong> {movie.rating}
+            </p>
+          </div>
+        ))}
+      </div> */}
       </div>
     </div>
   );
