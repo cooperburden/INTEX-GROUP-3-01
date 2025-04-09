@@ -264,8 +264,8 @@ const NewMovieForm = ({ onSuccess, onCancel }: NewMovieFormProps) => {
       </div>
 
       <div style={{ marginBottom: '10px' }}>
-        <button type="submit">Add Movie</button>
-        <button type="button" onClick={onCancel}>Cancel</button>
+        <button type="submit" className='btn btn-danger'>Add Movie</button>
+        <button type="button" onClick={onCancel} className='btn btn-dark'>Cancel</button>
       </div>
     </form>
   );

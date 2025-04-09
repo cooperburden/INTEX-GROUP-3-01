@@ -82,19 +82,53 @@ namespace MoviesIntex.Controllers
 
         [HttpGet("Admin")]
         public IActionResult GetMovies(
-    int pageSize = 5,
-    int pageNum = 1,
-    [FromQuery] List<string>? movieCategories = null,
-    string sortOrder = "asc",
-    string searchQuery = ""  // Add searchQuery as a parameter
+        int pageSize = 5,
+        int pageNum = 1,
+        [FromQuery] List<string>? movieCategories = null,
+        string sortOrder = "asc",
+        string searchQuery = ""  // Add searchQuery as a parameter
 )
         {
             var query = _context.MovieTitles.AsQueryable();
 
-            // Filter by movie categories
+            // Filter by movie categories (genre filters)
             if (movieCategories != null && movieCategories.Any())
             {
-                query = query.Where(m => movieCategories.Contains(m.Type));
+                // Dynamically filter by multiple genre columns in the database
+                query = query.Where(m =>
+                    (movieCategories.Contains("Action") && m.Action == 1) ||
+                    (movieCategories.Contains("Adventure") && m.Adventure == 1) ||
+                    (movieCategories.Contains("Anime Series International TV Shows") && m.AnimeSeriesInternationalTVShows == 1) ||
+                    (movieCategories.Contains("British TV Shows Docuseries International TV Shows") && m.BritishTVShowsDocuseriesInternationalTVShows == 1) ||
+                    (movieCategories.Contains("Children") && m.Children == 1) ||
+                    (movieCategories.Contains("Comedies") && m.Comedies == 1) ||
+                    (movieCategories.Contains("Comedies Dramas International Movies") && m.ComediesDramasInternationalMovies == 1) ||
+                    (movieCategories.Contains("Comedies International Movies") && m.ComediesInternationalMovies == 1) ||
+                    (movieCategories.Contains("Comedies Romantic Movies") && m.ComediesRomanticMovies == 1) ||
+                    (movieCategories.Contains("Crime TV Shows Docuseries") && m.CrimeTVShowsDocuseries == 1) ||
+                    (movieCategories.Contains("Documentaries") && m.Documentaries == 1) ||
+                    (movieCategories.Contains("Documentaries International Movies") && m.DocumentariesInternationalMovies == 1) ||
+                    (movieCategories.Contains("Docuseries") && m.Docuseries == 1) ||
+                    (movieCategories.Contains("Dramas") && m.Dramas == 1) ||
+                    (movieCategories.Contains("Dramas International Movies") && m.DramasInternationalMovies == 1) ||
+                    (movieCategories.Contains("Dramas Romantic Movies") && m.DramasRomanticMovies == 1) ||
+                    (movieCategories.Contains("Family Movies") && m.FamilyMovies == 1) ||
+                    (movieCategories.Contains("Fantasy") && m.Fantasy == 1) ||
+                    (movieCategories.Contains("Horror Movies") && m.HorrorMovies == 1) ||
+                    (movieCategories.Contains("International Movies Thrillers") && m.InternationalMoviesThrillers == 1) ||
+                    (movieCategories.Contains("International TV Shows Romantic TV Shows TV Dramas") && m.InternationalTVShowsRomanticTVShowsTVDramas == 1) ||
+                    (movieCategories.Contains("Kids' TV") && m.KidsTV == 1) ||
+                    (movieCategories.Contains("Language TV Shows") && m.LanguageTVShows == 1) ||
+                    (movieCategories.Contains("Musicals") && m.Musicals == 1) ||
+                    (movieCategories.Contains("Nature TV") && m.NatureTV == 1) ||
+                    (movieCategories.Contains("Reality TV") && m.RealityTV == 1) ||
+                    (movieCategories.Contains("Spirituality") && m.Spirituality == 1) ||
+                    (movieCategories.Contains("TV Action") && m.TVAction == 1) ||
+                    (movieCategories.Contains("TV Comedies") && m.TVComedies == 1) ||
+                    (movieCategories.Contains("TV Dramas") && m.TVDramas == 1) ||
+                    (movieCategories.Contains("Talk Shows TV Comedies") && m.TalkShowsTVComedies == 1) ||
+                    (movieCategories.Contains("Thrillers") && m.Thrillers == 1)
+                );
             }
 
             // Filter by search query (case-insensitive), now done at the database level
@@ -128,6 +162,7 @@ namespace MoviesIntex.Controllers
 
             return Ok(result);
         }
+
 
 
 

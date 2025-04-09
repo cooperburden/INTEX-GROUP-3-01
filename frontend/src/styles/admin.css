@@ -1,0 +1,38 @@
+/* 1. Black background for the whole page */
+body {
+    background-color: #000;
+    color: white;
+    margin: 0;
+    padding: 0;
+  }
+  
+  /* 2. White header and other text on black */
+  header, .header, h1, h2, h3, h4, h5, h6, label, p {
+    color: white;
+  }
+  
+  /* 3. White background and black text for the filter section */
+  .filter-box {
+    background-color: #fff !important;
+    color: #000 !important;
+    padding: 1.5rem;
+    border-radius: 12px;
+    margin: 2rem auto;
+    max-width: 900px;
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
+  }
+  
+  /* Ensure inputs and labels inside are styled properly */
+  .filter-box input,
+  .filter-box select,
+  .filter-box label,
+  .filter-box button {
+    color: #000 !important;
+  }
+  
+  /* Optional spacing */
+  .filter-box .form-group,
+  .filter-box .form-control {
+    margin-bottom: 1rem;
+  }
+  
