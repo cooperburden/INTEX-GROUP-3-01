@@ -2,6 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../AuthContext';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
+import Footer from '../components/Footer';
 import * as Yup from 'yup';
 
 interface LoginFormValues {
@@ -49,6 +50,7 @@ const Login: React.FC = () => {
   };
 
   return (
+    <>
     <div
       style={{
         backgroundColor: '#000',
@@ -161,6 +163,8 @@ const Login: React.FC = () => {
         </Formik>
       </div>
     </div>
+    <Footer />
+    </>
   );
 };
 
