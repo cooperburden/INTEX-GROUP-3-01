@@ -10,7 +10,7 @@ const VideoPlayer = () => {
           top: 0,
           left: 0,
           width: "100%",
-          height: "90vh", // Video takes top 90% (matches your layout)
+          height: "100vh", // Video takes top 90% (matches your layout)
           overflow: "hidden",
           zIndex: 0, // Below cards
           background: "#000",

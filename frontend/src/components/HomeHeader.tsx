@@ -1,4 +1,3 @@
-import React from "react";
 import "../styles/Header.scss";
 import { useNavigate } from "react-router-dom";
 
@@ -11,12 +10,15 @@ function Header() {
     <>
       <header className="header">
         {/* Logo on the left */}
-        <img
-          src="../../public/logo.png"
-          alt="Company Logo"
-          style={{ width: "125px", height: "125px" }}
-          className="logo"
-        />
+        <div className="logo-container">
+          <img
+            src="/logo.png"
+            alt="Company Logo"
+            style={{ width: "100px", height: "100px" }}
+            className="logo"
+          />
+          <h1 className="logo-title">CineNiche</h1>
+        </div>
 
         <div className="wrapper-right">
 
