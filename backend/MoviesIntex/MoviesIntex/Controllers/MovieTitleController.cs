@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using MoviesIntex.Data;
 using System.Linq;
 using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
 
 namespace MoviesIntex.Controllers
 {
@@ -96,10 +97,10 @@ namespace MoviesIntex.Controllers
                 query = query.Where(m => movieCategories.Contains(m.Type));
             }
 
-            // Filter by search query (case-insensitive)
+            // Filter by search query (case-insensitive), now done at the database level
             if (!string.IsNullOrEmpty(searchQuery))
             {
-                query = query.Where(m => m.Title.Contains(searchQuery, StringComparison.OrdinalIgnoreCase));
+                query = query.Where(m => EF.Functions.Like(m.Title, $"%{searchQuery}%"));
             }
 
             // Sort by title based on the sortOrder
@@ -112,21 +113,23 @@ namespace MoviesIntex.Controllers
                 query = query.OrderBy(m => m.Title);
             }
 
-            var something = query
+            var movies = query
                 .Skip((pageNum - 1) * pageSize)
                 .Take(pageSize)
                 .ToList();
 
             var totalNumMovies = query.Count();
 
-            var someObject = new
+            var result = new
             {
-                Movies = something,
+                Movies = movies,
                 TotalNumMovies = totalNumMovies
             };
 
-            return Ok(someObject);
+            return Ok(result);
         }
+
+
 
 
 
