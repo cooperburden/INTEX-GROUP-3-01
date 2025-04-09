@@ -5,6 +5,7 @@ using System.Linq;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using System.Text.RegularExpressions;
+using System.Security.Claims;
 
 namespace MoviesIntex.Controllers
 {
@@ -13,6 +14,7 @@ namespace MoviesIntex.Controllers
     public class MovieTitlesController : ControllerBase
     {
         private readonly MovieDbContext _context;
+        private readonly Services.RecommendationService _recommendationService; // Add this
 
         private static readonly Dictionary<string, string> GenreMapping = new(StringComparer.OrdinalIgnoreCase)
         {
@@ -51,9 +53,10 @@ namespace MoviesIntex.Controllers
         };
 
 
-        public MovieTitlesController(MovieDbContext context)
+public MovieTitlesController(MovieDbContext context, Services.RecommendationService recommendationService) // Updated constructor
         {
             _context = context;
+            _recommendationService = recommendationService; // Inject RecommendationService
         }
 
        
@@ -320,55 +323,59 @@ public IActionResult GetMovies(
         
     }
 
-    private List<string> GetRecommendedMovieIds(string userId)
-{
-    // TODO: Replace this dummy logic with your actual recommendation model.
-    // For now, assume these are the recommended movie ShowIds.
-    return new List<string> { "s1", "s2", "s3" };
-}
 
 [HttpGet("Recommended")]
 public IActionResult GetRecommendedMovies()
 {
-    // Step 2A. Retrieve the logged-in user's identifier.
-    // If your authentication system stores the user’s identity as a claim, you could access it like this:
-    var userId = User.Identity.Name;
-    
-    // (Optional) If you need to verify that the user is logged in, you can add:
+    // Step 2A: Retrieve the logged-in user's identifier
+     var userId = "189";//User.FindFirst(ClaimTypes.NameIdentifier)?.Value; // Get user ID from claims
     if (string.IsNullOrEmpty(userId))
     {
         return Unauthorized(new { message = "User is not authenticated." });
     }
-    
-    // Step 2B. Get the recommended movie IDs using your recommender helper.
-    List<string> recommendedIds = GetRecommendedMovieIds(userId);
-    
-    // Step 2C. Query the database to get the full list of movies.
-    // The following loads movies into memory—if your dataset is large, consider refining this query.
-    var allMovies = _context.MovieTitles.ToList();
-    
-    // Step 2D. Filter the movies based on the recommended movie IDs.
-    var recommendedMovies = allMovies
-        .Where(movie => recommendedIds.Contains(movie.ShowId))
-        .Select(movie => new
-        {
-            movie.ShowId,
-            movie.Title,
-            movie.Type,
-            movie.Director,
-            movie.Cast,
-            movie.Country,
-            movie.ReleaseYear,
-            movie.Rating,
-            movie.Duration,
-            movie.Description
-            // Include any other properties you need
-        })
-        .ToList();
-    
-    // Step 2E. Return the filtered list as JSON.
-    return Ok(new { Recommendations = recommendedMovies });
-}
 
+    try
+    {
+        // Step 2B: Get recommendations from Python script via RecommendationService
+        var pythonRecommendations = _recommendationService.GetRecommendations(userId);
+
+        if (!pythonRecommendations.Any())
+        {
+            return Ok(new { Recommendations = new List<object>(), Message = "No recommendations found." });
+        }
+
+        // Step 2C: Load all movies from the database to match titles
+        var allMovies = _context.MovieTitles.ToList();
+
+        // Step 2D: Match Python recommendations (titles) to database movies (ShowIds)
+        var recommendedMovies = allMovies
+            .Where(movie => pythonRecommendations.Any(pr => pr.Title == movie.Title))
+            .Select(movie => new
+            {
+                movie.ShowId,
+                movie.Title,
+                movie.Type,
+                movie.Director,
+                movie.Cast,
+                movie.Country,
+                movie.ReleaseYear,
+                movie.Rating,
+                movie.Duration,
+                movie.Description,
+                averageRating = _context.MovieRatings
+                    .Where(r => r.ShowId == movie.ShowId)
+                    .Average(r => (double?)r.Rating) ?? 0
+                // Add genre flags if needed in the response
+            })
+            .ToList();
+
+        // Step 2E: Return the filtered list as JSON
+        return Ok(new { Recommendations = recommendedMovies });
+    }
+    catch (Exception ex)
+    {
+        return StatusCode(500, new { message = $"Error generating recommendations: {ex.Message}" });
+    }
+}
 }
 }

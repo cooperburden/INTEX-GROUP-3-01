@@ -21,13 +21,16 @@ const CardSlider = () => {
   useEffect(() => {
     const fetchMovies = async () => {
       try {
-        const response = await fetch("https://localhost:5000/api/MovieTitles");
+        const response = await fetch(
+          "https://localhost:5000/api/MovieTitles/Recommended"
+        );
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
-        const data: Movie[] = await response.json();
-        // Limit the movies array to only the first three items.
-        setMovies(data.slice(0, 9));
+        const data = await response.json();
+        // If the backend returns { Recommendations: [...] }, then:
+        setMovies(data.recommendations);
+        console.log("DEBUG data:", data);
       } catch (err: unknown) {
         setError(
           err instanceof Error ? err.message : "An unknown error occurred"
@@ -96,7 +99,7 @@ const CardSlider = () => {
   }
 
   return (
-    <div className="card-slider">
+    <div className="card-slider" style={{ minHeight: "350px" }}>
       <button onClick={prevSlide} className="carousel-button prev">
         ❮
       </button>

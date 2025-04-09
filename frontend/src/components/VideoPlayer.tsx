@@ -1,4 +1,4 @@
-const VideoPlayer = () => {
+const VideoPlayer: React.FC = () => {
   return (
     <div
       style={{
@@ -6,9 +6,9 @@ const VideoPlayer = () => {
         // top: 0,
         // left: 0,
         width: "100%",
-        height: "400vh", // Video takes top 90% (matches your layout)
+        height: "90vh", // Video takes top 90% (matches your layout)
         overflow: "hidden",
-        zIndex: 20, // Below cards
+        zIndex: 10, // Below cards
         background: "#000",
       }}
     >
