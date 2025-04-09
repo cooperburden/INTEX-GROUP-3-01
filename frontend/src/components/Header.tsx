@@ -1,21 +1,31 @@
 import React from "react";
 import "../styles/Header.scss";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../AuthContext";
 
 function Header() {
+  const { logout, isAuthenticated } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    navigate("/");
+  };
+
   return (
     <>
       <header className="header">
         {/* Logo on the left */}
         <img
-          src="../../public/logo.png"
+          src="/logo.png"
           alt="Company Logo"
-          style={{ width: "125px", height: "125px" }}
+          style={{ width: "100px", height: "100px" }}
           className="logo"
         />
 
         <div className="wrapper-right">
           <div>
-            <input
+            {/* <input
               type="input"
               className="form__field"
               placeholder="Search"
@@ -25,33 +35,34 @@ function Header() {
             />
             <label htmlFor="search" className="form__label">
               Search
-            </label>
+            </label> */}
+            <button className="magnify-button"></button>
           </div>
 
-          {/* User Icon on the right */}
-          <div className="dropdown">
-            <img
-              src="../../public/user-icon-white.svg"
-              alt="User Icon"
-              style={{ width: "50px", height: "60px" }}
-            />
-            {/* Triangle trigger for dropdown */}
-            <img
-              src="../../public/trianglewhite.svg"
-              alt="Dropdown Arrow"
-              className="dropdown-icon"
-              style={{ width: "15px", height: "15px" }}
-            />
+          {/* User Icon and dropdown menu (only when logged in) */}
+          {isAuthenticated && (
+            <div className="dropdown">
+              <img
+                src="/user-icon-white.svg"
+                alt="User Icon"
+                style={{ width: "50px", height: "60px" }}
+              />
+              <img
+                src="/trianglewhite.svg"
+                alt="Dropdown Arrow"
+                className="dropdown-icon"
+                style={{ width: "15px", height: "15px" }}
+              />
 
-            {/* Dropdown menu */}
-            <div className="dropdown-menu">
-              <ul>
-                <li>Profile</li>
-                <li>Settings</li>
-                <li>Logout</li>
-              </ul>
+              <div className="dropdown-menu">
+                <ul>
+                  <li>Profile</li>
+                  <li>Settings</li>
+                  <li onClick={handleLogout}>Logout</li>
+                </ul>
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </header>
     </>
