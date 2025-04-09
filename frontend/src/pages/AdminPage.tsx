@@ -7,7 +7,7 @@ import EditMovieForm from '../components/EditMovieForm';
 import Footer from '../components/Footer';
 import GenreFilter from '../components/GenreFilter';
 import Header from '../components/Header';
-//import "../styles/admin.css"
+import "../styles/admin.css"
 
 const AdminPage = () => {
   const [movies, setMovies] = useState<Movie[]>([]);
@@ -157,128 +157,124 @@ const AdminPage = () => {
         <Header /> {/* Sticky header */}
       </div>
 
+      <div className="container-fluid" style={{ marginTop: `${headerHeight}px`, padding: '20px' }}>
+        <h1>Admin - Movies</h1>
 
-    <div className="container-fluid" style={{ marginTop: `${headerHeight}px`, padding: '20px' }}>
-      <h1>Admin - Movies</h1>
+        {error && <p className="text-red-500">Error: {error}</p>}
 
-      {error && <p className="text-red-500">Error: {error}</p>}
+        {!showForm && (
+          <button className="btn btn-danger mb-3" onClick={() => setShowForm(true)}>
+            Add Movie
+          </button>
+        )}
 
-      {!showForm && (
-        <button className="btn btn-danger mb-3" onClick={() => setShowForm(true)}>
-          Add Movie
-        </button>
-      )}
-
-      <div className="row">
-        <div className="col-md-3">
-          {/* Genre filter component */}
-          <GenreFilter
-            genres={allGenres}
-            selectedGenres={selectedGenres}
-            onGenreChange={setSelectedGenres}
-          />
-        </div>
-        <div className="col-md-9">
-          <div className="mb-3">
-            <input
-              type="text"
-              className="form-control"
-              placeholder="Search movies..."
-              value={searchQuery}
-              onChange={handleSearchChange}
+        <div className="row">
+          <div className="col-md-3">
+            {/* Genre filter component */}
+            <GenreFilter
+              genres={allGenres}
+              selectedGenres={selectedGenres}
+              onGenreChange={setSelectedGenres}
             />
           </div>
 
-          {showForm && (
-            <NewMovieForm
-              onSuccess={() => {
-                setShowForm(false);
-                fetchMovies(pageSize, pageNum, [], 'asc', '').then((data) => setMovies(data.movies));
-              }}
-              onCancel={() => setShowForm(false)}
-            />
-          )}
-
-          {editingMovie && (
-            <EditMovieForm
-              movie={editingMovie}
-              onSuccess={() => {
-                setEditingMovie(null);
-                fetchMovies(pageSize, pageNum, [], 'asc', '').then((data) => setMovies(data.movies));
-              }}
-              onCancel={() => setEditingMovie(null)}
-            />
-          )}
-
-          {loading ? (
-            <p>Loading movies...</p>
-          ) : (
-            <>
-              <div className="table-responsive">
-                <table className="table table-bordered table-striped">
-                  <thead className="table-dark">
-                    <tr>
-                      <th style={{ width: '5%' }}>Type</th>
-                      <th style={{ width: '15%' }}>Title</th>
-                      <th style={{ width: '10%' }}>Director</th>
-                      <th style={{ width: '10%' }}>Cast</th>
-                      <th style={{ width: '10%' }}>Country</th>
-                      <th style={{ width: '5%' }}>Release Year</th>
-                      <th style={{ width: '5%' }}>Rating</th>
-                      <th style={{ width: '5%' }}>Duration</th>
-                      <th style={{ width: '15%' }}>Description</th>
-                      <th style={{ width: '10%' }}>Genre</th>
-                      <th style={{ width: '10%' }}></th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {filteredMovies.map((m) => (
-                      <tr key={m.showId}>
-                        <td>{m.type}</td>
-                        <td>{m.title}</td>
-                        <td>{m.director}</td>
-                        <td>{m.cast}</td>
-                        <td>{m.country}</td>
-                        <td>{m.releaseYear}</td>
-                        <td>{m.rating}</td>
-                        <td>{m.duration}</td>
-                        <td>{m.description}</td>
-                        <td>{getGenreName(m)}</td>
-                        <td>
-                          <button
-                            className="btn btn-dark btn-sm w-100 mb-1"
-                            onClick={() => setEditingMovie(m)}
-                          >
-                            Edit
-                          </button>
-                          <button
-                            className="btn btn-danger btn-sm w-100"
-                            onClick={() => handleDelete(m.showId)}
-                          >
-                            Delete
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-              <Pagination
-                currentPage={pageNum}
-                totalPages={totalPages}
-                pageSize={pageSize}
-                onPageChange={setPageNum}
-                onPageSizeChange={(newSize) => {
-                  setPageSize(newSize);
-                  setPageNum(1);
-                }}
+          <div className="col-md-9">
+            <div className="mb-3">
+              <input
+                type="text"
+                className="form-control"
+                placeholder="Search movies..."
+                value={searchQuery}
+                onChange={handleSearchChange}
               />
-            </>
-          )}
+            </div>
+
+            {showForm && (
+              <NewMovieForm
+                onSuccess={() => {
+                  setShowForm(false);
+                  fetchMovies(pageSize, pageNum, [], 'asc', '').then((data) => setMovies(data.movies));
+                }}
+                onCancel={() => setShowForm(false)}
+              />
+            )}
+
+            {editingMovie && (
+              <EditMovieForm
+                movie={editingMovie}
+                onSuccess={() => {
+                  setEditingMovie(null);
+                  fetchMovies(pageSize, pageNum, [], 'asc', '').then((data) => setMovies(data.movies));
+                }}
+                onCancel={() => setEditingMovie(null)}
+              />
+            )}
+
+            {loading ? (
+              <p>Loading movies...</p>
+            ) : (
+              <>
+                <div className="table-responsive">
+                  <table className="table table-bordered table-striped" style={{ width: '100%' }}>
+                    <thead className="table-dark">
+                      <tr>
+                        <th>Title</th>
+                        <th>Director</th>
+                        <th>Cast</th>
+                        <th>Country</th>
+                        <th>Release Year</th>
+                        <th>Rating</th>
+                        <th>Duration</th>
+                        <th>Genre</th>
+                        <th></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {filteredMovies.map((m) => (
+                        <tr key={m.showId}>
+                          <td>{m.title}</td>
+                          <td>{m.director}</td>
+                          <td>{m.cast}</td>
+                          <td>{m.country}</td>
+                          <td>{m.releaseYear}</td>
+                          <td>{m.rating}</td>
+                          <td>{m.duration}</td>
+                          <td>{getGenreName(m)}</td>
+                          <td>
+                            <button
+                              className="btn btn-dark btn-sm w-100 mb-1"
+                              onClick={() => setEditingMovie(m)}
+                            >
+                              Edit
+                            </button>
+                            <button
+                              className="btn btn-danger btn-sm w-100"
+                              onClick={() => handleDelete(m.showId)}
+                            >
+                              Delete
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+                <Pagination
+                  currentPage={pageNum}
+                  totalPages={totalPages}
+                  pageSize={pageSize}
+                  onPageChange={setPageNum}
+                  onPageSizeChange={(newSize) => {
+                    setPageSize(newSize);
+                    setPageNum(1);
+                  }}
+                />
+              </>
+            )}
+          </div>
         </div>
       </div>
-    </div>
-    <Footer />
+      <Footer />
     </>
   );
 };
