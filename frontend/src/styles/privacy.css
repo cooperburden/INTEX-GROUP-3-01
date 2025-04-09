@@ -1,0 +1,50 @@
+/* Privacy.css */
+.privacy-container {
+    padding: 20px;
+    margin-top: var(--header-height); /* Dynamically set from JS */
+    max-width: 1200px; /* Optional: Set a max width to ensure readability */
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.privacy-title {
+    text-align: center;
+    font-size: 2rem; /* Set a font size to make the title prominent */
+    margin-bottom: 20px; /* Ensure some space between the title and the content */
+}
+
+.privacy-subtitle {
+    text-align: left;
+    font-weight: bold;
+    font-size: 1.25rem; /* Make subtitles a bit larger */
+    margin-top: 20px; /* Add some spacing before the subtitle */
+    margin-bottom: 10px; /* Space after subtitle */
+}
+
+.privacy-section {
+    text-align: left;
+    margin-bottom: 20px; /* Ensure sections are spaced out */
+}
+
+ul {
+    margin-left: 20px;
+    list-style-type: disc;
+    padding-left: 0; /* Remove any default padding */
+}
+
+ul li {
+    margin-bottom: 10px; /* Increase the space between list items for better readability */
+    line-height: 1.5; /* Improve line spacing within list items */
+}
+
+p {
+    margin-bottom: 10px; /* Add margin between paragraphs */
+    line-height: 1.6; /* Ensure paragraphs are easier to read */
+}
+
+/* Optional: Add some styling for sections like Data Controller or Personal Data We Collect */
+.privacy-section h3 {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+    font-weight: bold;
+}

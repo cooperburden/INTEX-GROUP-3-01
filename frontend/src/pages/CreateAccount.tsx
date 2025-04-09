@@ -1,12 +1,13 @@
 import React from "react";
 import CreateAccountForm from "../components/CreateAccountForm";
 import { useNavigate } from "react-router-dom";
+import Footer from "../components/Footer";
 
 
 const CreateAccount = () => {
     const navigate = useNavigate();
   return (
-
+  <>
     
     <div
       style={{
@@ -62,6 +63,8 @@ const CreateAccount = () => {
         <CreateAccountForm />
       </div>
     </div>
+    <Footer />
+    </>
   );
 };
 

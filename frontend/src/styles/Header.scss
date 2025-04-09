@@ -1,4 +1,22 @@
 .header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.logo-container {
+  display: flex;
+  align-items: center;
+}
+
+.logo-title {
+  font-size: 2rem;
+  margin-left: 10px;
+  font-weight: bold;
+}
+
+
+.header {
   position: fixed; /* Fixes the header relative to the viewport */
   top: 0;
   left: 0;
