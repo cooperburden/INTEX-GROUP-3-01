@@ -12,15 +12,11 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 // Provider component to wrap around the parts of the app that need access to auth state
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
-
-  // Check localStorage on load
-  useEffect(() => {
+  // Initialize `isAuthenticated` based on `localStorage`
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
     const storedStatus = localStorage.getItem('isLoggedIn');
-    if (storedStatus === 'true') {
-      setIsAuthenticated(true);
-    }
-  }, []);
+    return storedStatus === 'true'; // returns true if logged in, false otherwise
+  });
 
   // Function to handle user login
   const login = () => {
