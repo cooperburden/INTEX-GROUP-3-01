@@ -77,7 +77,7 @@ const SearchPage = () => {
         <Header /> {/* Sticky header */}
       </div>
 
-      <div className="container-fluid" style={{ padding: '20px', marginTop: '80px' }}>
+      <div className="container-fluid" style={{ padding: '20px', marginTop: '100px' }}>
         <h1 style={{ paddingTop: '20px' }}>Search</h1> {/* Added extra padding above the title */}
 
         <div className="row">
