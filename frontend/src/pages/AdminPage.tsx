@@ -82,7 +82,7 @@ const AdminPage = () => {
 
     if (selectedGenres.length > 0) {
       filtered = filtered.filter((movie) =>
-        selectedGenres.every((genre) => (movie as any)[genre] === 1)
+        selectedGenres.some((genre) => (movie as any)[genre] === 1)
       );
     }
 
