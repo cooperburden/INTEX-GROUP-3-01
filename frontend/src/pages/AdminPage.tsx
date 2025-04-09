@@ -4,10 +4,11 @@ import { deleteMovie, fetchMovies } from '../api/MoviesAPI';
 import Pagination from '../components/Pagination';
 import NewMovieForm from '../components/NewMovieForm';
 import EditMovieForm from '../components/EditMovieForm';
-import Footer from '../components/Footer'
+import Footer from '../components/Footer';
 
 const AdminPage = () => {
   const [movies, setMovies] = useState<Movie[]>([]);
+  const [filteredMovies, setFilteredMovies] = useState<Movie[]>([]); // Added filteredMovies state
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [pageSize, setPageSize] = useState<number>(10);
@@ -34,19 +35,24 @@ const AdminPage = () => {
     loadMovies();
   }, [pageSize, pageNum, searchQuery]);
 
-  // Debounced search query handler
+  // Filter movies based on the search query
   useEffect(() => {
-    const debounceTimeout = setTimeout(() => {
-      setPageNum(1);  // Reset to page 1 when search query changes
-    }, 500); // 500ms debounce delay
-
-    return () => clearTimeout(debounceTimeout);
-  }, [searchQuery]);
+    if (searchQuery === '') {
+      setFilteredMovies(movies); // No filtering if search is empty
+    } else {
+      setFilteredMovies(
+        movies.filter((movie) =>
+          (movie.title?.toLowerCase() || '').includes(searchQuery.toLowerCase()) ||
+          (movie.director?.toLowerCase() || '').includes(searchQuery.toLowerCase()) ||
+          (movie.country?.toLowerCase() || '').includes(searchQuery.toLowerCase())
+        )
+      );
+    }
+  }, [searchQuery, movies]);
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value); // Update search query state
   };
-
 
   const handleDelete = async (showId: string) => {
     const confirmDelete = window.confirm(
@@ -58,23 +64,21 @@ const AdminPage = () => {
       await deleteMovie(showId);
       // Correctly filter out the deleted movie
       setMovies(movies.filter((m) => m.showId !== showId));
+      setFilteredMovies(filteredMovies.filter((m) => m.showId !== showId)); // Update filteredMovies as well
     } catch (error) {
       alert('Failed to delete movie. Please try again.');
     }
   };
-  
 
   const getGenreName = (movie: Movie) => {
     const genreMap: { [key: string]: string } = {
       action: 'Action',
       adventure: 'Adventure',
       animeSeriesInternationalTVShows: 'Anime Series / International TV Shows',
-      britishTVShowsDocuseriesInternationalTVShows:
-        'British TV Shows / Docuseries / International TV Shows',
+      britishTVShowsDocuseriesInternationalTVShows: 'British TV Shows / Docuseries / International TV Shows',
       children: 'Children',
       comedies: 'Comedies',
-      comediesDramasInternationalMovies:
-        'Comedies / Dramas / International Movies',
+      comediesDramasInternationalMovies: 'Comedies / Dramas / International Movies',
       comediesInternationalMovies: 'Comedies / International Movies',
       comediesRomanticMovies: 'Comedies / Romantic Movies',
       crimeTVShowsDocuseries: 'Crime TV Shows / Docuseries',
@@ -88,8 +92,7 @@ const AdminPage = () => {
       fantasy: 'Fantasy',
       horrorMovies: 'Horror Movies',
       internationalMoviesThrillers: 'International Movies / Thrillers',
-      internationalTVShowsRomanticTVShowsTVDramas:
-        'International TV Shows / Romantic TV Shows / TV Dramas',
+      internationalTVShowsRomanticTVShowsTVDramas: 'International TV Shows / Romantic TV Shows / TV Dramas',
       kidsTV: 'Kids TV',
       languageTVShows: 'Language TV Shows',
       musicals: 'Musicals',
@@ -104,7 +107,6 @@ const AdminPage = () => {
     };
 
     for (let genre in genreMap) {
-      // Cast only the specific genre flag in the movie object to number (0 or 1)
       if ((movie as any)[genre] === 1) {
         return genreMap[genre];
       }
@@ -128,7 +130,7 @@ const AdminPage = () => {
         </button>
       )}
 
-<div className="mb-3">
+      <div className="mb-3">
         <input
           type="text"
           className="form-control"
@@ -181,7 +183,7 @@ const AdminPage = () => {
           </tr>
         </thead>
         <tbody>
-          {movies.map((m) => (
+          {filteredMovies.map((m) => (
             <tr key={m.showId}>
               <td>{m.showId}</td>
               <td>{m.type}</td>
