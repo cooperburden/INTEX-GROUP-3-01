@@ -103,7 +103,10 @@ const CardSlider = () => {
       <div className="carousel-container">
         <div
           className="carousel-track"
-          style={{ transform: `translateX(-${currentIndex * 33.33}%)` }}
+          style={{
+            transform: `translateX(-${currentIndex * 300}px)`, // Slide by card width (350px)
+            width: `${movies.length * 300}px`, // Total width of all cards
+          }}
         >
           {movies.map((movie, index) => (
             <div
