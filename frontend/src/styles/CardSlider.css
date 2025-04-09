@@ -1,3 +1,7 @@
+* {
+  box-sizing: border-box;
+}
+
 /* Import font */
 @import url("https://fonts.googleapis.com/css?family=Lato");
 /* Import fonts */
@@ -7,15 +11,16 @@
 
 .card-slider {
   position: relative;
-  max-width: 1200px;
-  margin: 300px auto 0;
-  min-height: 100vh;
-  padding: 70px;
-  display: flex;
+  width: 100%;
+  /* margin: 0px auto 0; */
+  min-height: 20vh;
+  padding: 20px 20px;
+  /* padding: 70px 0; */
+  /* display: flex;
   flex-wrap: wrap;
-  justify-content: center;
-  align-items: center;
-  background: hsl(0, 0%, 0%);
+  justify-content: center; */
+  /* align-items: center; */
+  background-color: hsl(0, 0%, 0%);
   font-family:
     "Lato",
     "Segoe Ui",
@@ -27,12 +32,14 @@
 .carousel-container {
   overflow: hidden;
   width: 100%;
+  background-color: #000000;
 }
 
 .carousel-track {
   display: flex;
   transition: transform 0.5s ease-in-out;
-  width: calc(33.33% * var(--movie-count));
+
+  background-color: black;
 }
 
 .carousel-button {
@@ -45,6 +52,7 @@
   padding: 10px;
   cursor: pointer;
   font-size: 20px;
+  z-index: 5;
 }
 
 .prev {
@@ -63,9 +71,10 @@
   --white-2: hsl(0, 0%, 80%);
   --dark: hsl(var(--hue), 25%, 10%);
   --grey: hsl(0, 0%, 50%);
-  width: 300px;
+  width: 300px; /* Responsive width */
+
   height: 300px;
-  margin: 5px;
+  margin: 5px 0;
   perspective: 1000px;
 }
 

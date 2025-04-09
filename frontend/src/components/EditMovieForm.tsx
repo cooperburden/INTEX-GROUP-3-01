@@ -9,7 +9,6 @@ interface EditMovieFormProps {
 }
 
 const EditMovieForm = ({ movie, onSuccess, onCancel }: EditMovieFormProps) => {
-  // List of genre keys that match the boolean properties on Movie.
   const genreOptions = [
     'action',
     'adventure',
@@ -45,30 +44,23 @@ const EditMovieForm = ({ movie, onSuccess, onCancel }: EditMovieFormProps) => {
     'thrillers',
   ];
 
-  // Separate state for form data and for the genre selected via the dropdown.
   const [formData, setFormData] = useState<Movie>({ ...movie });
   const [selectedGenre, setSelectedGenre] = useState<string>('');
 
-  // On mount (or when movie changes), initialize selectedGenre based on which genre boolean equals 1.
   useEffect(() => {
-    const initialGenre =
-      genreOptions.find((genre) => (movie as any)[genre] === 1) || '';
+    const initialGenre = genreOptions.find((genre) => (movie as any)[genre] === 1) || '';
     setSelectedGenre(initialGenre);
     setFormData({ ...movie });
   }, [movie]);
 
-  // Update standard fields.
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // Handle type (Movie/TV Show) changes.
   const handleTypeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, type: e.target.value });
   };
 
-  // When a user selects a genre, update both the separate selectedGenre state and
-  // update the genre booleans in formData.
   const handleGenreChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newGenre = e.target.value;
     setSelectedGenre(newGenre);
@@ -84,7 +76,6 @@ const EditMovieForm = ({ movie, onSuccess, onCancel }: EditMovieFormProps) => {
     }));
   };
 
-  // Submit the form data.
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     await updateMovie(formData.showId, formData);
@@ -95,40 +86,37 @@ const EditMovieForm = ({ movie, onSuccess, onCancel }: EditMovieFormProps) => {
     <form onSubmit={handleSubmit}>
       <h2>Edit Movie</h2>
 
-      {/* Show ID (read-only) */}
-      <div>
-        <label>Show ID:</label>
+      <div style={{ marginBottom: '10px' }}>
+        <label style={{ marginRight: '10px' }}>Show ID:</label>
         <p>{formData.showId}</p>
       </div>
 
-      {/* Type: Radio Buttons */}
-      <div>
-        <label>Type:</label>
-        <div>
+      <div style={{ marginBottom: '10px' }}>
+        <label style={{ marginRight: '10px' }}>Type:</label>
+        <label>
           <input
             type="radio"
-            id="movie"
             name="type"
             value="Movie"
             checked={formData.type === 'Movie'}
             onChange={handleTypeChange}
           />
-          <label htmlFor="movie">Movie</label>
+          Movie
+        </label>
+        <label>
           <input
             type="radio"
-            id="tvShow"
             name="type"
             value="TV Show"
             checked={formData.type === 'TV Show'}
             onChange={handleTypeChange}
           />
-          <label htmlFor="tvShow">TV Show</label>
-        </div>
+          TV Show
+        </label>
       </div>
 
-      {/* Other fields */}
-      <div>
-        <label>Title:</label>
+      <div style={{ marginBottom: '10px' }}>
+        <label style={{ marginRight: '10px' }}>Title:</label>
         <input
           type="text"
           name="title"
@@ -137,8 +125,8 @@ const EditMovieForm = ({ movie, onSuccess, onCancel }: EditMovieFormProps) => {
         />
       </div>
 
-      <div>
-        <label>Director:</label>
+      <div style={{ marginBottom: '10px' }}>
+        <label style={{ marginRight: '10px' }}>Director:</label>
         <input
           type="text"
           name="director"
@@ -147,8 +135,8 @@ const EditMovieForm = ({ movie, onSuccess, onCancel }: EditMovieFormProps) => {
         />
       </div>
 
-      <div>
-        <label>Cast:</label>
+      <div style={{ marginBottom: '10px' }}>
+        <label style={{ marginRight: '10px' }}>Cast:</label>
         <input
           type="text"
           name="cast"
@@ -157,8 +145,8 @@ const EditMovieForm = ({ movie, onSuccess, onCancel }: EditMovieFormProps) => {
         />
       </div>
 
-      <div>
-        <label>Country:</label>
+      <div style={{ marginBottom: '10px' }}>
+        <label style={{ marginRight: '10px' }}>Country:</label>
         <input
           type="text"
           name="country"
@@ -167,8 +155,8 @@ const EditMovieForm = ({ movie, onSuccess, onCancel }: EditMovieFormProps) => {
         />
       </div>
 
-      <div>
-        <label>Release Year:</label>
+      <div style={{ marginBottom: '10px' }}>
+        <label style={{ marginRight: '10px' }}>Release Year:</label>
         <input
           type="number"
           name="releaseYear"
@@ -177,8 +165,8 @@ const EditMovieForm = ({ movie, onSuccess, onCancel }: EditMovieFormProps) => {
         />
       </div>
 
-      <div>
-        <label>Rating:</label>
+      <div style={{ marginBottom: '10px' }}>
+        <label style={{ marginRight: '10px' }}>Rating:</label>
         <input
           type="text"
           name="rating"
@@ -187,8 +175,8 @@ const EditMovieForm = ({ movie, onSuccess, onCancel }: EditMovieFormProps) => {
         />
       </div>
 
-      <div>
-        <label>Duration:</label>
+      <div style={{ marginBottom: '10px' }}>
+        <label style={{ marginRight: '10px' }}>Duration:</label>
         <input
           type="text"
           name="duration"
@@ -197,8 +185,8 @@ const EditMovieForm = ({ movie, onSuccess, onCancel }: EditMovieFormProps) => {
         />
       </div>
 
-      <div>
-        <label>Description:</label>
+      <div style={{ marginBottom: '10px' }}>
+        <label style={{ marginRight: '10px' }}>Description:</label>
         <input
           type="text"
           name="description"
@@ -207,9 +195,8 @@ const EditMovieForm = ({ movie, onSuccess, onCancel }: EditMovieFormProps) => {
         />
       </div>
 
-      {/* Genre Dropdown */}
-      <div>
-        <label>Genre:</label>
+      <div style={{ marginBottom: '10px' }}>
+        <label style={{ marginRight: '10px' }}>Genre:</label>
         <select value={selectedGenre} onChange={handleGenreChange}>
           <option value="">Select Genre</option>
           {genreOptions.map((genre) => (
@@ -220,10 +207,11 @@ const EditMovieForm = ({ movie, onSuccess, onCancel }: EditMovieFormProps) => {
         </select>
       </div>
 
-      {/* Submit Buttons */}
-      <div>
-        <button type="submit">Update Movie</button>
-        <button type="button" onClick={onCancel}>
+      <div style={{ marginBottom: '10px' }}>
+        <button type="submit" className="btn btn-danger">
+          Save Changes
+        </button>
+        <button type="button" onClick={onCancel} className="btn btn-dark">
           Cancel
         </button>
       </div>

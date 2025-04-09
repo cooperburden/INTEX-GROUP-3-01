@@ -1,7 +1,12 @@
 import React from "react";
 import "../styles/Header.scss";
+import { useNavigate } from "react-router-dom";
 
 function Header() {
+
+  const navigate = useNavigate();
+
+
   return (
     <>
       <header className="header">
@@ -27,7 +32,7 @@ function Header() {
   {/* Hover Dropdown Menu */}
   <div className="dropdown-menu">
     <ul>
-      <li>Login</li>
+    <li onClick={() => navigate("/login")}>Login</li> {/* 👈 Navigate to login */}
     </ul>
   </div>
 

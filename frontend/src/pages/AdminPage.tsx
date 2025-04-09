@@ -4,10 +4,14 @@ import { deleteMovie, fetchMovies } from '../api/MoviesAPI';
 import Pagination from '../components/Pagination';
 import NewMovieForm from '../components/NewMovieForm';
 import EditMovieForm from '../components/EditMovieForm';
-import Footer from '../components/Footer'
+import Footer from '../components/Footer';
+import GenreFilter from '../components/GenreFilter';
+import Header from '../components/Header';
+//import "../styles/admin.css"
 
 const AdminPage = () => {
   const [movies, setMovies] = useState<Movie[]>([]);
+  const [filteredMovies, setFilteredMovies] = useState<Movie[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [pageSize, setPageSize] = useState<number>(10);
@@ -16,65 +20,102 @@ const AdminPage = () => {
   const [showForm, setShowForm] = useState(false);
   const [editingMovie, setEditingMovie] = useState<Movie | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>('');
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState<string>(searchQuery);
+  const [headerHeight, setHeaderHeight] = useState<number>(0);
+
+  const allGenres = [
+    'action', 'adventure', 'animeSeriesInternationalTVShows', 'britishTVShowsDocuseriesInternationalTVShows', 
+    'children', 'comedies', 'comediesDramasInternationalMovies', 'comediesInternationalMovies', 
+    'comediesRomanticMovies', 'crimeTVShowsDocuseries', 'documentaries', 'documentariesInternationalMovies', 
+    'docuseries', 'dramas', 'dramasInternationalMovies', 'dramasRomanticMovies', 'familyMovies', 'fantasy', 
+    'horrorMovies', 'internationalMoviesThrillers', 'internationalTVShowsRomanticTVShowsTVDramas', 'kidsTV', 
+    'languageTVShows', 'musicals', 'natureTV', 'realityTV', 'spirituality', 'tvAction', 'tvComedies', 'tvDramas', 
+    'talkShowsTVComedies', 'thrillers'
+  ];
+
+  const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
+
+  useEffect(() => {
+    const timerId = setTimeout(() => {
+      setDebouncedSearchQuery(searchQuery);
+    }, 500);
+    return () => clearTimeout(timerId);
+  }, [searchQuery]);
 
   useEffect(() => {
     const loadMovies = async () => {
       setLoading(true);
       try {
-        const data = await fetchMovies(pageSize, pageNum, [], 'asc', searchQuery);
+        const data = await fetchMovies(pageSize, pageNum, selectedGenres, 'asc', debouncedSearchQuery);
         setMovies(data.movies);
         setTotalPages(Math.ceil(data.totalNumMovies / pageSize));
+        setError(null);
       } catch (err) {
         setError((err as Error).message);
       } finally {
         setLoading(false);
       }
     };
-
+  
     loadMovies();
-  }, [pageSize, pageNum, searchQuery]);
+  }, [pageSize, pageNum, debouncedSearchQuery, selectedGenres]);
 
-  // Debounced search query handler
   useEffect(() => {
-    const debounceTimeout = setTimeout(() => {
-      setPageNum(1);  // Reset to page 1 when search query changes
-    }, 500); // 500ms debounce delay
+    // Calculate header height after the component has mounted
+    const header = document.querySelector('.header') as HTMLElement;
+    if (header) {
+      setHeaderHeight(header.offsetHeight);
+    }
+  }, []);
 
-    return () => clearTimeout(debounceTimeout);
-  }, [searchQuery]);
+  useEffect(() => {
+    let filtered = movies;
+
+    if (debouncedSearchQuery !== '') {
+      const lowerCaseSearch = debouncedSearchQuery.toLowerCase();
+      filtered = filtered.filter((movie) =>
+        (movie.title?.toLowerCase() || '').includes(lowerCaseSearch) ||
+        (movie.director?.toLowerCase() || '').includes(lowerCaseSearch) ||
+        (movie.country?.toLowerCase() || '').includes(lowerCaseSearch)
+      );
+    }
+
+    if (selectedGenres.length > 0) {
+      filtered = filtered.filter((movie) =>
+        selectedGenres.some((genre) => (movie as any)[genre] === 1)
+      );
+    }
+
+    setFilteredMovies(filtered);
+  }, [debouncedSearchQuery, movies, selectedGenres]);
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchQuery(e.target.value); // Update search query state
+    setSearchQuery(e.target.value);
   };
 
-
   const handleDelete = async (showId: string) => {
-    const confirmDelete = window.confirm(
-      'Are you sure you want to delete this movie?'
-    );
+    const confirmDelete = window.confirm('Are you sure you want to delete this movie?');
     if (!confirmDelete) return;
-  
+
     try {
       await deleteMovie(showId);
-      // Correctly filter out the deleted movie
-      setMovies(movies.filter((m) => m.showId !== showId));
+      const updatedMovies = movies.filter((m) => m.showId !== showId);
+      setMovies(updatedMovies);
+      setFilteredMovies(updatedMovies);
     } catch (error) {
       alert('Failed to delete movie. Please try again.');
     }
   };
-  
 
   const getGenreName = (movie: Movie) => {
     const genreMap: { [key: string]: string } = {
       action: 'Action',
       adventure: 'Adventure',
       animeSeriesInternationalTVShows: 'Anime Series / International TV Shows',
-      britishTVShowsDocuseriesInternationalTVShows:
-        'British TV Shows / Docuseries / International TV Shows',
+      britishTVShowsDocuseriesInternationalTVShows: 'British TV Shows / Docuseries / International TV Shows',
       children: 'Children',
       comedies: 'Comedies',
-      comediesDramasInternationalMovies:
-        'Comedies / Dramas / International Movies',
+      comediesDramasInternationalMovies: 'Comedies / Dramas / International Movies',
       comediesInternationalMovies: 'Comedies / International Movies',
       comediesRomanticMovies: 'Comedies / Romantic Movies',
       crimeTVShowsDocuseries: 'Crime TV Shows / Docuseries',
@@ -88,8 +129,7 @@ const AdminPage = () => {
       fantasy: 'Fantasy',
       horrorMovies: 'Horror Movies',
       internationalMoviesThrillers: 'International Movies / Thrillers',
-      internationalTVShowsRomanticTVShowsTVDramas:
-        'International TV Shows / Romantic TV Shows / TV Dramas',
+      internationalTVShowsRomanticTVShowsTVDramas: 'International TV Shows / Romantic TV Shows / TV Dramas',
       kidsTV: 'Kids TV',
       languageTVShows: 'Language TV Shows',
       musicals: 'Musicals',
@@ -104,127 +144,142 @@ const AdminPage = () => {
     };
 
     for (let genre in genreMap) {
-      // Cast only the specific genre flag in the movie object to number (0 or 1)
       if ((movie as any)[genre] === 1) {
         return genreMap[genre];
       }
     }
-    return ''; // Return empty string if no genre is selected
+    return '';
   };
 
-  if (loading) return <p>Loading movies...</p>;
-  if (error) return <p className="text-red-500">Error: {error}</p>;
-
   return (
-    <div>
+    <>
+      <div>
+        <Header /> {/* Sticky header */}
+      </div>
+
+
+    <div className="container-fluid" style={{ marginTop: `${headerHeight}px`, padding: '20px' }}>
       <h1>Admin - Movies</h1>
 
+      {error && <p className="text-red-500">Error: {error}</p>}
+
       {!showForm && (
-        <button
-          className="btn btn-success mb-3"
-          onClick={() => setShowForm(true)}
-        >
+        <button className="btn btn-danger mb-3" onClick={() => setShowForm(true)}>
           Add Movie
         </button>
       )}
 
-<div className="mb-3">
-        <input
-          type="text"
-          className="form-control"
-          placeholder="Search movies..."
-          value={searchQuery}
-          onChange={handleSearchChange} // Handle search change
-        />
+      <div className="row">
+        <div className="col-md-3">
+          {/* Genre filter component */}
+          <GenreFilter
+            genres={allGenres}
+            selectedGenres={selectedGenres}
+            onGenreChange={setSelectedGenres}
+          />
+        </div>
+        <div className="col-md-9">
+          <div className="mb-3">
+            <input
+              type="text"
+              className="form-control"
+              placeholder="Search movies..."
+              value={searchQuery}
+              onChange={handleSearchChange}
+            />
+          </div>
+
+          {showForm && (
+            <NewMovieForm
+              onSuccess={() => {
+                setShowForm(false);
+                fetchMovies(pageSize, pageNum, [], 'asc', '').then((data) => setMovies(data.movies));
+              }}
+              onCancel={() => setShowForm(false)}
+            />
+          )}
+
+          {editingMovie && (
+            <EditMovieForm
+              movie={editingMovie}
+              onSuccess={() => {
+                setEditingMovie(null);
+                fetchMovies(pageSize, pageNum, [], 'asc', '').then((data) => setMovies(data.movies));
+              }}
+              onCancel={() => setEditingMovie(null)}
+            />
+          )}
+
+          {loading ? (
+            <p>Loading movies...</p>
+          ) : (
+            <>
+              <div className="table-responsive">
+                <table className="table table-bordered table-striped">
+                  <thead className="table-dark">
+                    <tr>
+                      <th style={{ width: '5%' }}>Type</th>
+                      <th style={{ width: '15%' }}>Title</th>
+                      <th style={{ width: '10%' }}>Director</th>
+                      <th style={{ width: '10%' }}>Cast</th>
+                      <th style={{ width: '10%' }}>Country</th>
+                      <th style={{ width: '5%' }}>Release Year</th>
+                      <th style={{ width: '5%' }}>Rating</th>
+                      <th style={{ width: '5%' }}>Duration</th>
+                      <th style={{ width: '15%' }}>Description</th>
+                      <th style={{ width: '10%' }}>Genre</th>
+                      <th style={{ width: '10%' }}></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {filteredMovies.map((m) => (
+                      <tr key={m.showId}>
+                        <td>{m.type}</td>
+                        <td>{m.title}</td>
+                        <td>{m.director}</td>
+                        <td>{m.cast}</td>
+                        <td>{m.country}</td>
+                        <td>{m.releaseYear}</td>
+                        <td>{m.rating}</td>
+                        <td>{m.duration}</td>
+                        <td>{m.description}</td>
+                        <td>{getGenreName(m)}</td>
+                        <td>
+                          <button
+                            className="btn btn-dark btn-sm w-100 mb-1"
+                            onClick={() => setEditingMovie(m)}
+                          >
+                            Edit
+                          </button>
+                          <button
+                            className="btn btn-danger btn-sm w-100"
+                            onClick={() => handleDelete(m.showId)}
+                          >
+                            Delete
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              <Pagination
+                currentPage={pageNum}
+                totalPages={totalPages}
+                pageSize={pageSize}
+                onPageChange={setPageNum}
+                onPageSizeChange={(newSize) => {
+                  setPageSize(newSize);
+                  setPageNum(1);
+                }}
+              />
+            </>
+          )}
+        </div>
       </div>
-
-      {showForm && (
-        <NewMovieForm
-          onSuccess={() => {
-            setShowForm(false);
-            fetchMovies(pageSize, pageNum, [], 'asc', '').then((data) =>
-              setMovies(data.movies)
-            );
-          }}
-          onCancel={() => setShowForm(false)}
-        />
-      )}
-
-      {editingMovie && (
-        <EditMovieForm
-          movie={editingMovie}
-          onSuccess={() => {
-            setEditingMovie(null);
-            fetchMovies(pageSize, pageNum, [], 'asc', '').then((data) =>
-              setMovies(data.movies)
-            );
-          }}
-          onCancel={() => setEditingMovie(null)}
-        />
-      )}
-
-      <table className="table table-bordered table-striped">
-        <thead className="table-dark">
-          <tr>
-            <th>Show ID</th>
-            <th>Type</th>
-            <th>Title</th>
-            <th>Director</th>
-            <th>Cast</th>
-            <th>Country</th>
-            <th>Release Year</th>
-            <th>Rating</th>
-            <th>Duration</th>
-            <th>Description</th>
-            <th>Genre</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          {movies.map((m) => (
-            <tr key={m.showId}>
-              <td>{m.showId}</td>
-              <td>{m.type}</td>
-              <td>{m.title}</td>
-              <td>{m.director}</td>
-              <td>{m.cast}</td>
-              <td>{m.country}</td>
-              <td>{m.releaseYear}</td>
-              <td>{m.rating}</td>
-              <td>{m.duration}</td>
-              <td>{m.description}</td>
-              <td>{getGenreName(m)}</td>
-              <td>
-                <button
-                  className="btn btn-primary btn-sm w-100 mb-1"
-                  onClick={() => setEditingMovie(m)}
-                >
-                  Edit
-                </button>
-                <button
-                  className="btn btn-danger btn-sm w-100"
-                  onClick={() => handleDelete(m.showId)}
-                >
-                  Delete
-                </button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-
-      <Pagination
-        currentPage={pageNum}
-        totalPages={totalPages}
-        pageSize={pageSize}
-        onPageChange={setPageNum}
-        onPageSizeChange={(newSize) => {
-          setPageSize(newSize);
-          setPageNum(1);
-        }}
-      />
-      <Footer />
     </div>
+    <Footer />
+    </>
   );
 };
 
