@@ -3,10 +3,8 @@ const VideoPlayer = () => {
     <div
       style={{
         position: "relative",
-        // top: 0,
-        // left: 0,
         width: "100%",
-        height: "400vh", // Video takes top 90% (matches your layout)
+        height: "100vh", // Video takes top 90% (matches your layout)
         overflow: "hidden",
         zIndex: 20, // Below cards
         background: "#000",
@@ -23,7 +21,7 @@ const VideoPlayer = () => {
           width: "100%",
           height: "100%",
           objectFit: "cover",
-          pointerEvents: "none",
+          pointerEvents: "none", // Prevent video interaction
           display: "block",
         }}
       >
@@ -40,7 +38,7 @@ const VideoPlayer = () => {
           width: "100%",
           height: "100%",
           backgroundColor: "rgba(0, 0, 0, 0.4)", // Grey overlay
-          zIndex: 11, // Above video, below text
+          zIndex: 10, // Make sure it's behind the button and text
         }}
       />
 
@@ -51,7 +49,7 @@ const VideoPlayer = () => {
           top: "50%",
           left: "50%",
           transform: "translate(-50%, -50%)",
-          zIndex: 2, // Above overlay
+          zIndex: 15, // Ensure text and button are above overlay
           textAlign: "center",
           color: "white",
         }}
@@ -96,7 +94,7 @@ const VideoPlayer = () => {
           background:
             "linear-gradient(to top, rgba(128, 128, 128, 0.8), transparent)",
           pointerEvents: "none",
-          zIndex: 11, // Same level as grey overlay
+          zIndex: 10, // Same level as grey overlay
         }}
       />
     </div>
