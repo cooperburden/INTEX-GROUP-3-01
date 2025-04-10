@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import "../styles/CardSlider.css";
 import { Movie } from "../types/Movie";
+import { useNavigate } from "react-router-dom";
 
 interface CardSliderRecProps {
-  recType: "top_all" | "top_genre" | "second_genre"; // To specify which recommendation type to display
+  recType: "top_all" | "top_genre" | "second_genre";
 }
 
 const CardSliderRec: React.FC<CardSliderRecProps> = ({ recType }) => {
@@ -13,7 +14,13 @@ const CardSliderRec: React.FC<CardSliderRecProps> = ({ recType }) => {
   const [error, setError] = useState<string | null>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [userId, setUserId] = useState<number | null>(null);
-  const [genreName, setGenreName] = useState<string>(""); // To store the genre name for top_genre or second_genre
+  const [genreName, setGenreName] = useState<string>("");
+  const navigate = useNavigate();
+  const carouselRef = useRef<HTMLDivElement>(null);
+
+  const visibleCards = 3;
+  const cardWidth = 300;
+  const repeatFactor = 5; // Repeat the list 5 times
 
   const getSanitizedImageUrl = (title: string): string => {
     const sanitizedTitle = title.trim().replace(/[!\-&$?';<:().]/g, "");
@@ -21,7 +28,7 @@ const CardSliderRec: React.FC<CardSliderRecProps> = ({ recType }) => {
     return `/${finalTitle}.jpg`;
   };
 
-  // Step 1: Fetch the userId from /api/Users/me
+  // Fetch userId
   useEffect(() => {
     const fetchUserId = async () => {
       try {
@@ -32,8 +39,10 @@ const CardSliderRec: React.FC<CardSliderRecProps> = ({ recType }) => {
           throw new Error("Unauthorized");
         }
         const data = await response.json();
+        console.log("User ID fetched:", data.userId);
         setUserId(data.userId);
       } catch (err: unknown) {
+        console.error("Fetch userId error:", err);
         setError(
           err instanceof Error ? err.message : "An unknown error occurred"
         );
@@ -44,10 +53,10 @@ const CardSliderRec: React.FC<CardSliderRecProps> = ({ recType }) => {
     fetchUserId();
   }, []);
 
-  // Step 2: Fetch recommendations once userId is available
+  // Fetch recommendations
   useEffect(() => {
     const fetchRecommendations = async () => {
-      if (userId === null) return; // Wait until userId is fetched
+      if (userId === null) return;
 
       try {
         setLoading(true);
@@ -59,9 +68,8 @@ const CardSliderRec: React.FC<CardSliderRecProps> = ({ recType }) => {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         const data = await response.json();
-        console.log("API response:", data); // Debug: Check the structure in the console
+        console.log("API response:", data);
 
-        // Map the recType to the correct field in the API response
         const recFieldMap = {
           top_all: "top_all",
           top_genre: "top_genre",
@@ -71,7 +79,6 @@ const CardSliderRec: React.FC<CardSliderRecProps> = ({ recType }) => {
           data.recommendations[recFieldMap[recType]] || [];
         setMovies(recommendations);
 
-        // Set the genre name based on recType
         if (recType === "top_genre") {
           setGenreName(data.recommendations.top_genre_name || "Unknown Genre");
         } else if (recType === "second_genre") {
@@ -80,6 +87,7 @@ const CardSliderRec: React.FC<CardSliderRecProps> = ({ recType }) => {
           );
         }
       } catch (err: unknown) {
+        console.error("Fetch recommendations error:", err);
         setError(
           err instanceof Error ? err.message : "An unknown error occurred"
         );
@@ -94,8 +102,20 @@ const CardSliderRec: React.FC<CardSliderRecProps> = ({ recType }) => {
     }
   }, [userId, recType]);
 
-  const handleCardClick = (index: number) => {
-    setFlippedCard(flippedCard === index ? null : index);
+  const handleCardClick = (index: number, event: React.MouseEvent) => {
+    const target = event.target as HTMLElement;
+    if (target.closest("button") || target.closest("a")) {
+      return;
+    }
+    setFlippedCard(
+      flippedCard === index % movies.length ? null : index % movies.length
+    );
+  };
+
+  const handleSeeMoreClick = (showId: string, event: React.MouseEvent) => {
+    event.stopPropagation();
+    console.log("Navigating to:", `/movieDetails/${showId}`);
+    navigate(`/movieDetails/${showId}`);
   };
 
   const truncateDescription = (text: string, maxLength: number) => {
@@ -136,22 +156,39 @@ const CardSliderRec: React.FC<CardSliderRecProps> = ({ recType }) => {
   };
 
   const nextSlide = () => {
-    const visibleCards = 3;
-    if (
-      movies.length > visibleCards &&
-      currentIndex < movies.length - visibleCards
-    ) {
-      setCurrentIndex((prev) => prev + 1);
+    if (!carouselRef.current || movies.length === 0) return;
+
+    const totalCards = movies.length * repeatFactor;
+    const newIndex = currentIndex + 1;
+
+    if (newIndex >= totalCards) {
+      // Reset to start after 5 repeats
+      setTimeout(() => {
+        if (carouselRef.current) {
+          carouselRef.current.style.transition = "none";
+          setCurrentIndex(0);
+          setTimeout(() => {
+            if (carouselRef.current) {
+              carouselRef.current.style.transition =
+                "transform 0.5s ease-in-out";
+            }
+          }, 0);
+        }
+      }, 500);
+    } else {
+      setCurrentIndex(newIndex);
     }
   };
 
   const prevSlide = () => {
+    if (!carouselRef.current || movies.length === 0) return;
+
     if (currentIndex > 0) {
-      setCurrentIndex((prev) => prev - 1);
+      setCurrentIndex(currentIndex - 1);
     }
+    // No wrapping to the end when at index 0
   };
 
-  // Step 3: Determine the title based on recType
   const getSliderTitle = () => {
     switch (recType) {
       case "top_all":
@@ -183,25 +220,31 @@ const CardSliderRec: React.FC<CardSliderRecProps> = ({ recType }) => {
     );
   }
 
+  // Repeat the movie list 5 times
+  const repeatedMovies = Array(repeatFactor)
+    .fill(null)
+    .flatMap(() => movies);
+
   return (
     <div className="card-slider">
-      {getSliderTitle()} {/* Dynamically render the title */}
+      {getSliderTitle()}
       <button onClick={prevSlide} className="carousel-button prev">
         ❮
       </button>
       <div className="carousel-container">
         <div
+          ref={carouselRef}
           className="carousel-track"
           style={{
-            transform: `translateX(-${currentIndex * 300}px)`,
-            width: `${movies.length * 300}px`,
+            transform: `translateX(-${currentIndex * cardWidth}px)`,
+            width: `${repeatedMovies.length * cardWidth}px`,
           }}
         >
-          {movies.map((movie, index) => (
+          {repeatedMovies.map((movie, index) => (
             <div
-              key={movie.movieId}
-              className={`flip-card-container ${flippedCard === index ? "flipped" : ""}`}
-              onClick={() => handleCardClick(index)}
+              key={`${movie.movieId}-${index}`}
+              className={`flip-card-container ${flippedCard === index % movies.length ? "flipped" : ""}`}
+              onClick={(e) => handleCardClick(index % movies.length, e)}
             >
               <div className="flip-card">
                 <div className="card-front">
@@ -224,13 +267,27 @@ const CardSliderRec: React.FC<CardSliderRecProps> = ({ recType }) => {
                   <h3 className="card-title">{movie.title}</h3>
                   <ul className="card-details">
                     <li>
-                      {movie.duration} | {movie.rating} | {movie.year}
+                      {movie.duration || "N/A"} | {movie.rating || "N/A"} |{" "}
+                      {movie.year || "N/A"}
                     </li>
                   </ul>
                   <p className="card-description">
-                    {truncateDescription(movie.description, 200)}
+                    {truncateDescription(
+                      movie.description || "No description",
+                      200
+                    )}
                   </p>
-                  <button className="play-button" />
+                  <button
+                    className="btn btn-danger"
+                    onClick={(e) => handleSeeMoreClick(movie.movieId, e)}
+                    style={{
+                      marginTop: "auto",
+                      fontSize: "0.8rem",
+                      padding: "5px 10px",
+                    }}
+                  >
+                    See More
+                  </button>
                 </div>
               </div>
             </div>
