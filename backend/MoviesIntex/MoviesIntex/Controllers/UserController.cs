@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization; // 👈 Don't forget this one too!
 using MoviesIntex.Data;
+using System.Security.Claims;
 
 namespace MoviesIntex.Controllers
 {
@@ -29,6 +31,24 @@ namespace MoviesIntex.Controllers
             _context.SaveChanges();
 
             return Ok(newUser);
+        }
+
+        // ✅ This is inside the controller now
+        [HttpGet("me")]
+        [Authorize]
+        public IActionResult GetMyProfile()
+        {
+            var email = User.FindFirstValue(ClaimTypes.Email);
+
+            if (string.IsNullOrEmpty(email))
+                return Unauthorized();
+
+            var user = _context.MovieUsers.FirstOrDefault(u => u.Email == email);
+
+            if (user == null)
+                return NotFound("User not found in Movies.db");
+
+            return Ok(user);
         }
     }
 }

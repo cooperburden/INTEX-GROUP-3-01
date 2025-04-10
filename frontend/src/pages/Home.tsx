@@ -70,7 +70,7 @@ function Home() {
         }}
       >
         <HomeVideoPlayer />
-      </div>
+      </div> <br /><br /><br /><br /><br />
       <br /><br /><br /> <br />
 
       {/* Popular Movies Section */}
