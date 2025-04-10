@@ -2,26 +2,56 @@ import React, { useEffect, useState } from "react";
 import "../styles/CardSlider.css";
 import { Movie } from "../types/Movie";
 
-const CardSliderRec = () => {
+interface CardSliderRecProps {
+  recType: "top_all" | "top_genre" | "second_genre"; // To specify which recommendation type to display
+}
+
+const CardSliderRec: React.FC<CardSliderRecProps> = ({ recType }) => {
   const [movies, setMovies] = useState<Movie[]>([]);
   const [flippedCard, setFlippedCard] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [userId, setUserId] = useState<number | null>(null);
+  const [genreName, setGenreName] = useState<string>(""); // To store the genre name for top_genre or second_genre
 
-  // Example user ID (replace with dynamic user ID if applicable)
-  const userId = "189"; // You can make this dynamic based on your app's logic
-
-  // Helper function to generate a sanitized image URL from the movie title
   const getSanitizedImageUrl = (title: string): string => {
     const sanitizedTitle = title.trim().replace(/[!\-&$?';<:().]/g, "");
     const finalTitle = sanitizedTitle.replace(/ /g, "%20");
     return `/${finalTitle}.jpg`;
   };
 
+  // Step 1: Fetch the userId from /api/Users/me
+  useEffect(() => {
+    const fetchUserId = async () => {
+      try {
+        const response = await fetch("https://localhost:5000/api/Users/me", {
+          credentials: "include",
+        });
+        if (!response.ok) {
+          throw new Error("Unauthorized");
+        }
+        const data = await response.json();
+        setUserId(data.userId);
+      } catch (err: unknown) {
+        setError(
+          err instanceof Error ? err.message : "An unknown error occurred"
+        );
+        setUserId(null);
+      }
+    };
+
+    fetchUserId();
+  }, []);
+
+  // Step 2: Fetch recommendations once userId is available
   useEffect(() => {
     const fetchRecommendations = async () => {
+      if (userId === null) return; // Wait until userId is fetched
+
       try {
+        setLoading(true);
+        setError(null);
         const response = await fetch(
           `http://127.0.0.1:5001/api/recommendations/${userId}`
         );
@@ -30,58 +60,87 @@ const CardSliderRec = () => {
         }
         const data = await response.json();
         console.log("API response:", data); // Debug: Check the structure in the console
-        // Use the correct property name from the response
-        setMovies(data.recommendations.top_all);
+
+        // Map the recType to the correct field in the API response
+        const recFieldMap = {
+          top_all: "top_all",
+          top_genre: "top_genre",
+          second_genre: "second_genre",
+        };
+        const recommendations =
+          data.recommendations[recFieldMap[recType]] || [];
+        setMovies(recommendations);
+
+        // Set the genre name based on recType
+        if (recType === "top_genre") {
+          setGenreName(data.recommendations.top_genre_name || "Unknown Genre");
+        } else if (recType === "second_genre") {
+          setGenreName(
+            data.recommendations.second_genre_name || "Unknown Genre"
+          );
+        }
       } catch (err: unknown) {
         setError(
           err instanceof Error ? err.message : "An unknown error occurred"
         );
+        setMovies([]);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchRecommendations();
-  }, [userId]);
+    if (userId !== null) {
+      fetchRecommendations();
+    }
+  }, [userId, recType]);
 
-  // Toggle flip state for a specific card
   const handleCardClick = (index: number) => {
     setFlippedCard(flippedCard === index ? null : index);
   };
 
-  // Function to truncate description
   const truncateDescription = (text: string, maxLength: number) => {
     if (text.length <= maxLength) return text;
     return text.substring(0, maxLength) + "...";
   };
 
-  const renderStarRating = (averageRating: number) => {
-    const fullStars = Math.floor(averageRating);
-    const hasHalfStar = averageRating % 1 >= 0.5;
+  const renderStarRating = (averageRating: string | number) => {
+    const rating =
+      typeof averageRating === "string"
+        ? parseFloat(averageRating)
+        : averageRating;
+    if (isNaN(rating)) return null;
+
+    const fullStars = Math.floor(rating);
+    const hasHalfStar = rating % 1 >= 0.5;
     const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
+
     return (
       <span className="star-rating">
-        {Array.from({ length: fullStars }).map((_, i) => (
-          <span key={`full-${i}`} className="star full">
-            ⭐
-          </span>
-        ))}
-        {hasHalfStar && (
-          <span key="half" className="star half">
-            ✯
-          </span>
-        )}
-        {Array.from({ length: emptyStars }).map((_, i) => (
-          <span key={`empty-${i}`} className="star empty">
-            ☆
-          </span>
-        ))}
+        {Array(fullStars)
+          .fill(0)
+          .map((_, i) => (
+            <span key={`full-${i}`} className="star full">
+              ⭐
+            </span>
+          ))}
+        {hasHalfStar && <span className="star half">✯</span>}
+        {Array(emptyStars)
+          .fill(0)
+          .map((_, i) => (
+            <span key={`empty-${i}`} className="star empty">
+              ☆
+            </span>
+          ))}
       </span>
     );
   };
 
   const nextSlide = () => {
-    if (currentIndex < movies.length - 3) {
+    const visibleCards = 3;
+    if (
+      movies.length > visibleCards &&
+      currentIndex < movies.length - visibleCards
+    ) {
       setCurrentIndex((prev) => prev + 1);
     }
   };
@@ -92,17 +151,41 @@ const CardSliderRec = () => {
     }
   };
 
+  // Step 3: Determine the title based on recType
+  const getSliderTitle = () => {
+    switch (recType) {
+      case "top_all":
+        return <h1>Top Picks for You</h1>;
+      case "top_genre":
+        return <h1>Must-Watch {genreName}</h1>;
+      case "second_genre":
+        return <h1>Best of {genreName}</h1>;
+      default:
+        return <h1>Recommendations</h1>;
+    }
+  };
+
   if (loading) {
-    return <div className="card-slider">Loading...</div>;
+    return (
+      <div className="card-slider loading">Loading recommendations...</div>
+    );
   }
 
   if (error) {
-    return <div className="card-slider">Error: {error}</div>;
+    return <div className="card-slider error">Error: {error}</div>;
+  }
+
+  if (movies.length === 0) {
+    return (
+      <div className="card-slider no-results">
+        No recommendations available.
+      </div>
+    );
   }
 
   return (
     <div className="card-slider">
-      <h1>Top Picks for You</h1>
+      {getSliderTitle()} {/* Dynamically render the title */}
       <button onClick={prevSlide} className="carousel-button prev">
         ❮
       </button>
