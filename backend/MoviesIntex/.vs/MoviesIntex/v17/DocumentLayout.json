@@ -40,7 +40,7 @@
               "RelativeDocumentMoniker": "MoviesIntex\\Program.cs",
               "ToolTip": "C:\\Users\\annay\\OneDrive\\Documents\\School\\IS Core\\INTEX2\\INTEX-GROUP-3-01\\backend\\MoviesIntex\\MoviesIntex\\Program.cs",
               "RelativeToolTip": "MoviesIntex\\Program.cs",
-              "ViewState": "AgIAADkAAAAAAAAAAAAAAC0AAAAaAAAAAAAAAA==",
+              "ViewState": "AgIAAGwAAAAAAAAAAAAUwHMAAAAbAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-04-07T22:30:33.21Z",
               "EditorCaption": ""
@@ -55,8 +55,7 @@
               "RelativeToolTip": "MoviesIntex\\Controllers\\MovieTitleController.cs",
               "ViewState": "AgIAABoAAAAAAAAAAAAAwIYAAAAoAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-07T20:46:33.867Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-04-07T20:46:33.867Z"
             },
             {
               "$type": "Document",
@@ -80,8 +79,7 @@
               "RelativeToolTip": "MoviesIntex\\Data\\MovieTitle.cs",
               "ViewState": "AgIAAFoAAAAAAAAAAAA0wGQAAAAsAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-07T20:53:28.063Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-04-07T20:53:28.063Z"
             }
           ]
         }

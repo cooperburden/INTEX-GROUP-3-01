@@ -4,17 +4,20 @@ import { fetchMovies } from '../api/MoviesAPI';
 import Footer from '../components/Footer';
 import GenreFilter from '../components/GenreFilter';
 import Header from '../components/Header';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import { useNavigate } from 'react-router-dom';
+
+const MOVIES_PER_PAGE = 40;
 
 const Search = () => {
   const [movies, setMovies] = useState<Movie[]>([]);
-  const [filteredMovies, setFilteredMovies] = useState<Movie[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
+  const [page, setPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState<string>(searchQuery);
   const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
 
-  const navigate = useNavigate(); // Initialize the useNavigate hook
+  const navigate = useNavigate();
 
   const allGenres = [
     'action', 'adventure', 'animeSeriesInternationalTVShows', 'britishTVShowsDocuseriesInternationalTVShows', 
@@ -26,6 +29,7 @@ const Search = () => {
     'talkShowsTVComedies', 'thrillers'
   ];
 
+  // Debounce search input to avoid too many API calls.
   useEffect(() => {
     const timerId = setTimeout(() => {
       setDebouncedSearchQuery(searchQuery);
@@ -33,60 +37,71 @@ const Search = () => {
     return () => clearTimeout(timerId);
   }, [searchQuery]);
 
+  // Reset movie list when search query or genres change.
   useEffect(() => {
-    const loadMovies = async () => {
-      setLoading(true);
-      try {
-        // Fetching all movies by passing no limit
-        const data = await fetchMovies(1000, 1, selectedGenres, 'asc', debouncedSearchQuery); // Adjust this if you want more
+    // Reset list, pagination, and flag.
+    setMovies([]);
+    setPage(1);
+    setHasMore(true);
+    loadMovies(1, true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [debouncedSearchQuery, selectedGenres]);
+
+  // Function to load movies for a given page.
+  const loadMovies = async (pageToLoad: number, replace: boolean = false) => {
+    setLoading(true);
+    try {
+      // Pass the limit (MOVIES_PER_PAGE) and the current page number.
+      const data = await fetchMovies(MOVIES_PER_PAGE, pageToLoad, selectedGenres, 'asc', debouncedSearchQuery);
+      
+      if (replace) {
         setMovies(data.movies);
-        setFilteredMovies(data.movies);
-      } catch (err) {
-        console.error("Error fetching movies:", err);
-      } finally {
-        setLoading(false);
+      } else {
+        setMovies((prev) => [...prev, ...data.movies]);
+      }
+      // If we received fewer movies than requested, we've reached the end.
+      if (data.movies.length < MOVIES_PER_PAGE) {
+        setHasMore(false);
+      }
+    } catch (err) {
+      console.error("Error fetching movies:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Infinite scroll: add an event listener to load more movies when near bottom.
+  useEffect(() => {
+    const handleScroll = () => {
+      if (loading || !hasMore) return;
+      // Check if the user has scrolled near the bottom (100px from the bottom)
+      if (window.innerHeight + window.scrollY >= document.documentElement.offsetHeight - 10) {
+        const nextPage = page + 1;
+        loadMovies(nextPage);
+        setPage(nextPage);
       }
     };
 
-    loadMovies();
-  }, [debouncedSearchQuery, selectedGenres]);
-
-  useEffect(() => {
-    let filtered = movies;
-
-    if (debouncedSearchQuery !== '') {
-      const lowerCaseSearch = debouncedSearchQuery.toLowerCase();
-      filtered = filtered.filter((movie) =>
-        (movie.title?.toLowerCase() || '').includes(lowerCaseSearch)
-      );
-    }
-
-    if (selectedGenres.length > 0) {
-      filtered = filtered.filter((movie) =>
-        selectedGenres.some((genre) => (movie as any)[genre] === 1)
-      );
-    }
-
-    setFilteredMovies(filtered);
-  }, [debouncedSearchQuery, movies, selectedGenres]);
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [loading, hasMore, page, debouncedSearchQuery, selectedGenres]);
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
   };
 
   const handleSeeMoreClick = (showId: string) => {
-    navigate(`/movieDetails/${showId}`); // Navigate to the movie details page
+    navigate(`/movieDetails/${showId}`);
   };
 
   return (
     <>
       <div>
-        <Header /> {/* Sticky header */}
+        <Header />
       </div>
 
       <div className="container-fluid" style={{ padding: '20px', marginTop: '100px' }}>
-        <h1 style={{ paddingTop: '20px' }}>Search</h1> {/* Added extra padding above the title */}
-
+        <h1 style={{ paddingTop: '20px' }}>Search</h1>
         <div className="row">
           <div className="col-md-3">
             <GenreFilter
@@ -95,7 +110,6 @@ const Search = () => {
               onGenreChange={setSelectedGenres}
             />
           </div>
-
           <div className="col-md-9">
             <div className="mb-3">
               <input
@@ -107,62 +121,58 @@ const Search = () => {
               />
             </div>
 
-            {loading ? (
-              <p>Loading movies...</p>
-            ) : (
-              <div className="row">
-                {filteredMovies.map((movie) => (
-                  <div className="col-md-3 mb-4" key={movie.showId}>
-                    <div
-                      className="card"
-                      style={{
-                        backgroundColor: 'black',
-                        color: 'white',
-                        borderRadius: '0.5rem',
-                        overflow: 'hidden',
-                        transition: 'transform 0.3s',
-                        width: '200px',
-                        height: '200px',
-                        maxHeight: '500px',
-                        display: 'flex',
-                        flexDirection: 'column',  // Make the card a column flex container
-                        justifyContent: 'space-between',  // Space out the content
-                      }}
-                      onMouseEnter={(e) => (e.currentTarget.style.transform = 'scale(1.05)')}
-                      onMouseLeave={(e) => (e.currentTarget.style.transform = 'scale(1.0)')}
-                    >
-                      <div className="card-body" style={{ padding: '1rem' }}>
-                        <h5
-                          className="card-title"
-                          style={{
-                            fontSize: '1.2rem',
-                            fontWeight: 'bold',
-                            wordWrap: 'break-word',
-                          }}
-                        >
-                          {movie.title}
-                        </h5>
-                      </div>
-                      <button
-                        className="btn btn-danger"
-                        onClick={() => handleSeeMoreClick(movie.showId)} // Add the click handler
+            <div className="row">
+              {movies.map((movie) => (
+                <div className="col-md-3 mb-4" key={movie.showId}>
+                  <div
+                    className="card"
+                    style={{
+                      backgroundColor: 'black',
+                      color: 'white',
+                      borderRadius: '0.5rem',
+                      overflow: 'hidden',
+                      transition: 'transform 0.3s',
+                      width: '200px',
+                      height: '200px',
+                      maxHeight: '500px',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      justifyContent: 'space-between',
+                    }}
+                    onMouseEnter={(e) => (e.currentTarget.style.transform = 'scale(1.05)')}
+                    onMouseLeave={(e) => (e.currentTarget.style.transform = 'scale(1.0)')}
+                  >
+                    <div className="card-body" style={{ padding: '1rem' }}>
+                      <h5
+                        className="card-title"
                         style={{
-                          marginTop: 'auto',  // Push the button to the bottom
-                          fontSize: '0.8rem',  // Make the button smaller
-                          padding: '5px 10px',  // Adjust padding to make the button smaller
+                          fontSize: '1.2rem',
+                          fontWeight: 'bold',
+                          wordWrap: 'break-word',
                         }}
                       >
-                        See More
-                      </button>
+                        {movie.title}
+                      </h5>
                     </div>
+                    <button
+                      className="btn btn-danger"
+                      onClick={() => handleSeeMoreClick(movie.showId)}
+                      style={{
+                        marginTop: 'auto',
+                        fontSize: '0.8rem',
+                        padding: '5px 10px',
+                      }}
+                    >
+                      See More
+                    </button>
                   </div>
-                ))}
-              </div>
-            )}
+                </div>
+              ))}
+            </div>
+            {loading && <p>Loading movies...</p>}
           </div>
         </div>
       </div>
-
       <Footer />
     </>
   );
