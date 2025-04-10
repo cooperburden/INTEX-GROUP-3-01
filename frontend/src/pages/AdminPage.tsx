@@ -163,9 +163,11 @@ const AdminPage = () => {
         {error && <p className="text-red-500">Error: {error}</p>}
 
         {!showForm && (
-          <button className="btn btn-danger mb-3" onClick={() => setShowForm(true)}>
-            Add Movie
-          </button>
+          <div className="text-center mb-3">
+            <button className="btn btn-danger" onClick={() => setShowForm(true)}>
+              Add Movie
+            </button>
+          </div>
         )}
 
         <div className="row">

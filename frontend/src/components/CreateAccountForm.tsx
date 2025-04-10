@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Formik } from "formik";
+import * as Yup from "yup";
 
+// List of states for the dropdown
 const states = [
   "AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "FL", "GA",
   "HI", "ID", "IL", "IN", "IA", "KS", "KY", "LA", "ME", "MD",
@@ -9,6 +12,7 @@ const states = [
   "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY"
 ];
 
+// Input style for all form fields
 const inputStyle = {
   padding: "1rem",
   fontSize: "1.1rem",
@@ -21,6 +25,7 @@ const inputStyle = {
 const CreateAccountForm = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+
   const [formData, setFormData] = useState({
     name: "",
     phone: "",
@@ -31,6 +36,21 @@ const CreateAccountForm = () => {
     city: "",
     state: "",
     zip: ""
+  });
+
+  // Validation schema using Yup (12-character minimum password)
+  const validationSchema = Yup.object({
+    name: Yup.string().required("Name is required"),
+    phone: Yup.string().required("Phone is required"),
+    email: Yup.string().email("Invalid email address").required("Email is required"),
+    password: Yup.string()
+      .min(12, "Password must be at least 12 characters")
+      .required("Password is required"),
+    age: Yup.number().required("Age is required"),
+    gender: Yup.string().required("Gender is required"),
+    city: Yup.string().required("City is required"),
+    state: Yup.string().required("State is required"),
+    zip: Yup.number().required("ZIP code is required")
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -44,11 +64,9 @@ const CreateAccountForm = () => {
 
     try {
       // Step 1: Register with Identity
-      const registerResponse = await fetch("https://localhost:5000/register", {
+      const registerResponse = await fetch("https://localhost:5000/api/Users/register", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           email: formData.email,
           password: formData.password
@@ -86,7 +104,7 @@ const CreateAccountForm = () => {
 
       if (profileResponse.ok) {
         alert("✅ Account created successfully. Please log in.");
-        navigate("/");
+        navigate("/login");
       } else {
         alert("⚠️ Identity created, but failed to save profile.");
       }

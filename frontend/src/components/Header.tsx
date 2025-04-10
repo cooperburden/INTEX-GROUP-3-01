@@ -7,7 +7,13 @@ function Header() {
   const navigate = useNavigate();
 
   const handleLogout = () => {
+    // Your existing logout logic (make sure to call logout from your context)
     logout();
+  
+    // Clear the cookie consent from localStorage to show the notification again when they log back in
+    localStorage.removeItem('cookieConsent'); 
+  
+    // Navigate to the home page or wherever you want after logging out
     navigate("/");
   };
 

@@ -22,6 +22,8 @@ const Login: React.FC = () => {
   });
 
   const loginUser = async (email: string, password: string) => {
+    console.log("🔐 Sending login request to /login");
+  
     const response = await fetch('https://localhost:5000/login', {
       method: 'POST',
       headers: {
@@ -30,9 +32,13 @@ const Login: React.FC = () => {
       credentials: 'include',
       body: JSON.stringify({ email, password }),
     });
-
+  
+    console.log("🧾 Login response status:", response.status);
     return response.ok;
   };
+  
+
+
 
   const handleSubmit = async (values: LoginFormValues) => {
     try {

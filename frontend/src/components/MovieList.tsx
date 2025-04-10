@@ -2,9 +2,12 @@ import Header from "./Header";
 import "../styles/MovieList.css";
 import VideoPlayer from "./VideoPlayer";
 import CardSlider from "./CardSlider";
+import CardSliderRec from "./CardSliderRec";
+import Footer from "./Footer";
 
 function MovieList() {
   return (
+    <>
     <div className="page-wrapper">
       {/* Header */}
       <div className="header-wrapper">
@@ -16,7 +19,7 @@ function MovieList() {
           <VideoPlayer />
         </div>
         <div className="slide-container">
-          <CardSlider /> {/* First carousel */}
+          <CardSliderRec /> {/* First carousel */}
         </div>
         <div className="slide-container">
           <CardSlider /> {/* Second carousel */}
@@ -26,6 +29,8 @@ function MovieList() {
         </div>
       </div>
     </div>
+    <Footer />
+    </>
   );
 }
 
