@@ -45,6 +45,20 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
+app.Use(async (context, next) =>
+{
+    context.Response.Headers.Append("Content-Security-Policy",
+        "default-src 'self'; " +
+        "script-src 'self' https://trusted.cdn.com 'unsafe-inline'; " +
+        "style-src 'self' https://trusted.cdn.com 'unsafe-inline'; " +
+        "img-src 'self' data: https://trusted.image-host.com; " +
+        "font-src 'self' https://trusted.font-cdn.com; " +
+        "connect-src 'self' https://localhost:5000 http://localhost:3000 http://localhost:4000");
+
+    await next();
+});
+
+
 // Dev tools
 if (app.Environment.IsDevelopment())
 {
@@ -78,5 +92,10 @@ app.MapGet("/pingauth", (ClaimsPrincipal user) =>
     var email = user.FindFirstValue(ClaimTypes.Email) ?? "unknown@example.com";
     return Results.Json(new { email = email });
 }).RequireAuthorization();
+
+app.MapGet("/test-csp", () =>
+{
+    return Results.Text("<html><head></head><body><h1>Hello CSP</h1></body></html>", "text/html");
+});
 
 app.Run();
