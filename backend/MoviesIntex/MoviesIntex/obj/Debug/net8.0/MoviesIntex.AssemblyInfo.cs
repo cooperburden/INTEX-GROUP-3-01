@@ -14,11 +14,15 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
 <<<<<<< HEAD
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+b81df15edaa9e4d23a8dd5ec65a2799c37f45623")]
+=======
+<<<<<<< HEAD
 [assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+4989a00ee569a16b68e1986dbd8d89beef868235")]
 =======
 [assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+8b9611b988191afcac05e2496b53bbec78374786")]
 [assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+fd36ab38f2a7b35cb9a09b4a822f02c752d2be90")]
 >>>>>>> cae73f28c3981c2879e597c76dcc0672ec3daa8d
+>>>>>>> e35e983c9bcaa27fb3d6b791b00986f19784d018
 [assembly: System.Reflection.AssemblyProductAttribute("MoviesIntex")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MoviesIntex")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
