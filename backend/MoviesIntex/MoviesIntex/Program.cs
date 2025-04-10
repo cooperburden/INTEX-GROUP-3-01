@@ -36,6 +36,9 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.Services.AddAuthorization();
 
 
+builder.Services.AddScoped<UserMigrationService>();
+
+
 builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
     {
         options.SignIn.RequireConfirmedAccount = false;
@@ -156,6 +159,17 @@ app.MapPost("/login", async (
 
     return Results.Unauthorized();
 });
+
+
+
+
+// Run the user migration on startup
+using (var scope = app.Services.CreateScope())
+{
+    var userMigrationService = scope.ServiceProvider.GetRequiredService<UserMigrationService>();
+    await userMigrationService.MigrateUsersAsync(); // This will run the migration
+}
+
 
 
 
