@@ -66,20 +66,33 @@ namespace MoviesIntex.Controllers
 
             if (newUser == null)
             {
+                Console.WriteLine("⚠️ User data is null.");
                 return BadRequest("User data is null.");
             }
 
-            _context.MovieUsers.Add(newUser);
-            _context.SaveChanges();
+            try
+            {
+                Console.WriteLine("🔥 Attempting to add user to MovieUsers table...");
+                _context.MovieUsers.Add(newUser);
+                _context.SaveChanges();
+                Console.WriteLine("✅ User added to MovieUsers table successfully.");
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"⚠️ Error adding user to MovieUsers: {ex.Message}");
+                return StatusCode(500, "Error saving user to Movies.db");
+            }
 
             return Ok(newUser);
         }
-    }
 
-    // Model for user registration
-    public class RegisterModel
-    {
-        public string Email { get; set; }
-        public string Password { get; set; }
+
+        // Model for user registration
+        public class RegisterModel
+        {
+            public string Email { get; set; }
+            public string Password { get; set; }
+        }
     }
 }
