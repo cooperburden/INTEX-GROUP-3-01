@@ -21,13 +21,13 @@ function MovieList() {
             <VideoPlayer />
           </div>
           <div className="slide-container">
-            <CardSliderRec /> {/* First carousel */}
+            <CardSliderRec recType="top_all" /> {/* First carousel */}
           </div>
           <div className="slide-container">
-            <CardSliderFirstGenre /> {/* Second carousel */}
+            <CardSliderRec recType="top_genre" /> {/* Second carousel */}
           </div>
           <div className="slide-container">
-            <CardSliderSecondGenre /> {/* Third carousel */}
+            <CardSliderRec recType="second_genre" /> {/* Third carousel */}
           </div>
         </div>
       </div>
