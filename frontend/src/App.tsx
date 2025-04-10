@@ -11,11 +11,15 @@ import Search from './pages/Search';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './AuthContext';
 import ProtectedRoute from './ProtectedRoute';
+import CookieConsent from './components/CookieConsent';
+
+
 
 function App() {
   return (
     <AuthProvider>
       <Router>
+        <CookieConsent />
         <Routes>
           {/* Public Routes */}
           <Route path='/' element={<Home />} />
