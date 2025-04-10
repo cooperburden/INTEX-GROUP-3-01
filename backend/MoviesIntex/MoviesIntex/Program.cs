@@ -36,16 +36,19 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.Services.AddAuthorization();
 
 
+builder.Services.AddScoped<UserMigrationService>();
+
+
 builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
     {
         options.SignIn.RequireConfirmedAccount = false;
 
         // ✅ Stronger password rules (for your assignment)
-        options.Password.RequireDigit = true;
-        options.Password.RequiredLength = 8;
-        options.Password.RequireNonAlphanumeric = true;
-        options.Password.RequireUppercase = true;
-        options.Password.RequireLowercase = true;
+        options.Password.RequireDigit = false;
+        options.Password.RequiredLength = 12;
+        options.Password.RequireNonAlphanumeric = false;
+        options.Password.RequireUppercase = false;
+        options.Password.RequireLowercase = false;
     })
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders();
@@ -156,6 +159,17 @@ app.MapPost("/login", async (
 
     return Results.Unauthorized();
 });
+
+
+
+
+// Run the user migration on startup
+using (var scope = app.Services.CreateScope())
+{
+    var userMigrationService = scope.ServiceProvider.GetRequiredService<UserMigrationService>();
+    await userMigrationService.MigrateUsersAsync(); // This will run the migration
+}
+
 
 
 
