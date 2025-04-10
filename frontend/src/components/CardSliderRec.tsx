@@ -31,7 +31,7 @@ const CardSliderRec = () => {
         const data = await response.json();
         console.log("API response:", data); // Debug: Check the structure in the console
         // Use the correct property name from the response
-        setMovies(data.recommendedMovies);
+        setMovies(data.recommendations.top_all);
       } catch (err: unknown) {
         setError(
           err instanceof Error ? err.message : "An unknown error occurred"
@@ -102,6 +102,7 @@ const CardSliderRec = () => {
 
   return (
     <div className="card-slider">
+      <h1>Top Picks for You</h1>
       <button onClick={prevSlide} className="carousel-button prev">
         ❮
       </button>
