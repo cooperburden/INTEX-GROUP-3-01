@@ -1,17 +1,21 @@
-import React, { useEffect, useState } from "react";
-import "../styles/CardSlider.css"; // Import the CSS
+import React, { useEffect, useState, useRef } from "react";
+import "../styles/CardSlider.css";
 import { Movie } from "../types/Movie";
-// import { Carousel } from "react-responsive-carousel";
-// import "react-responsive-carousel/lib/styles/carousel.min.css"; // Default styles
+import { useNavigate } from "react-router-dom";
 
-const CardSlider = () => {
+const CardSlider: React.FC = () => {
   const [movies, setMovies] = useState<Movie[]>([]);
   const [flippedCard, setFlippedCard] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const navigate = useNavigate();
+  const carouselRef = useRef<HTMLDivElement>(null);
 
-  // Helper function to generate a sanitized image URL from the movie title.
+  const visibleCards = 3;
+  const cardWidth = 300;
+  const repeatFactor = 5;
+
   const getSanitizedImageUrl = (title: string): string => {
     const sanitizedTitle = title.trim().replace(/[!\-&$?';<:().]/g, "");
     const finalTitle = sanitizedTitle.replace(/ /g, "%20");
@@ -21,17 +25,23 @@ const CardSlider = () => {
   useEffect(() => {
     const fetchMovies = async () => {
       try {
+        setLoading(true);
         const response = await fetch("https://localhost:5000/api/MovieTitles");
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
-        const data: Movie[] = await response.json();
-        // Limit the movies array to only the first three items.
-        setMovies(data.slice(0, 9));
+        const data = await response.json();
+        const topRatedMovies = [...data]
+          .filter((movie: Movie) => movie.averageRating > 0)
+          .sort((a: Movie, b: Movie) => b.averageRating - a.averageRating)
+          .slice(0, 15);
+        setMovies(topRatedMovies);
       } catch (err: unknown) {
+        console.error("Error fetching movies:", err);
         setError(
           err instanceof Error ? err.message : "An unknown error occurred"
         );
+        setMovies([]);
       } finally {
         setLoading(false);
       }
@@ -39,12 +49,21 @@ const CardSlider = () => {
 
     fetchMovies();
   }, []);
-  // Toggle flip state for a specific card
-  const handleCardClick = (index: number) => {
+
+  const handleCardClick = (index: number, event: React.MouseEvent) => {
+    const target = event.target as HTMLElement;
+    if (target.closest("button") || target.closest("a")) {
+      return;
+    }
     setFlippedCard(flippedCard === index ? null : index);
   };
 
-  // Function to truncate description
+  const handleSeeMoreClick = (showId: string, event: React.MouseEvent) => {
+    event.stopPropagation();
+    console.log("Navigating to:", `/movieDetails/${showId}`);
+    navigate(`/movieDetails/${showId}`);
+  };
+
   const truncateDescription = (text: string, maxLength: number) => {
     if (text.length <= maxLength) return text;
     return text.substring(0, maxLength) + "...";
@@ -54,65 +73,98 @@ const CardSlider = () => {
     const fullStars = Math.floor(averageRating);
     const hasHalfStar = averageRating % 1 >= 0.5;
     const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
+
     return (
       <span className="star-rating">
-        {Array.from({ length: fullStars }).map((_, i) => (
-          <span key={`full-${i}`} className="star full">
-            ⭐
-          </span>
-        ))}
-        {hasHalfStar && (
-          <span key="half" className="star half">
-            ✯
-          </span>
-        )}
-        {Array.from({ length: emptyStars }).map((_, i) => (
-          <span key={`empty-${i}`} className="star empty">
-            ☆
-          </span>
-        ))}
+        {Array(fullStars)
+          .fill(0)
+          .map((_, i) => (
+            <span key={`full-${i}`} className="star full">
+              ⭐
+            </span>
+          ))}
+        {hasHalfStar && <span className="star half">✯</span>}
+        {Array(emptyStars)
+          .fill(0)
+          .map((_, i) => (
+            <span key={`empty-${i}`} className="star empty">
+              ☆
+            </span>
+          ))}
       </span>
     );
   };
+
   const nextSlide = () => {
-    if (currentIndex < movies.length - 3) {
-      // Stop when last 3 are visible
-      setCurrentIndex((prev) => prev + 1);
+    if (!carouselRef.current || movies.length === 0) return;
+
+    const totalCards = movies.length * repeatFactor;
+    const newIndex = currentIndex + 1;
+
+    if (newIndex >= totalCards) {
+      setTimeout(() => {
+        if (carouselRef.current) {
+          carouselRef.current.style.transition = "none";
+          setCurrentIndex(0);
+          setTimeout(() => {
+            if (carouselRef.current) {
+              carouselRef.current.style.transition =
+                "transform 0.5s ease-in-out";
+            }
+          }, 0);
+        }
+      }, 500);
+    } else {
+      setCurrentIndex(newIndex);
     }
   };
 
   const prevSlide = () => {
+    if (!carouselRef.current || movies.length === 0) return;
+
     if (currentIndex > 0) {
-      // Stop at the start
-      setCurrentIndex((prev) => prev - 1);
+      setCurrentIndex(currentIndex - 1);
     }
   };
+
   if (loading) {
-    return <div className="card-slider">Loading...</div>;
+    return <div className="card-slider loading">Loading top movies...</div>;
   }
 
   if (error) {
-    return <div className="card-slider">Error: {error}</div>;
+    return <div className="card-slider error">Error: {error}</div>;
   }
+
+  if (movies.length === 0) {
+    return (
+      <div className="card-slider no-results">No top movies available.</div>
+    );
+  }
+
+  const repeatedMovies = Array(repeatFactor)
+    .fill(null)
+    .flatMap(() => movies);
 
   return (
     <div className="card-slider">
+      <h1>What's Popular Today</h1>
       <button onClick={prevSlide} className="carousel-button prev">
         ❮
       </button>
       <div className="carousel-container">
         <div
+          ref={carouselRef}
           className="carousel-track"
           style={{
-            transform: `translateX(-${currentIndex * 300}px)`, // Slide by card width (350px)
-            width: `${movies.length * 300}px`, // Total width of all cards
+            transform: `translateX(-${currentIndex * cardWidth}px)`,
+            width: `${repeatedMovies.length * cardWidth}px`,
           }}
         >
-          {movies.map((movie, index) => (
+          {repeatedMovies.map((movie, index) => (
             <div
-              key={movie.movieId}
-              className={`flip-card-container ${flippedCard === index ? "flipped" : ""}`}
-              onClick={() => handleCardClick(index)}
+              key={`${movie.showId}-${index}`}
+              className={`flip-card-container ${flippedCard === index % movies.length ? "flipped" : ""}`}
+              onClick={(e) => handleCardClick(index % movies.length, e)}
             >
               <div className="flip-card">
                 <div className="card-front">
@@ -135,13 +187,27 @@ const CardSlider = () => {
                   <h3 className="card-title">{movie.title}</h3>
                   <ul className="card-details">
                     <li>
-                      {movie.duration} | {movie.rating} | {movie.year}
+                      {movie.duration || "N/A"} | {movie.rating || "N/A"} |{" "}
+                      {movie.year || "N/A"}
                     </li>
                   </ul>
                   <p className="card-description">
-                    {truncateDescription(movie.description, 200)}
+                    {truncateDescription(
+                      movie.description || "No description available",
+                      200
+                    )}
                   </p>
-                  <button className="play-button" />
+                  <button
+                    className="btn btn-danger"
+                    onClick={(e) => handleSeeMoreClick(movie.showId, e)}
+                    style={{
+                      marginTop: "auto",
+                      fontSize: "0.8rem",
+                      padding: "5px 10px",
+                    }}
+                  >
+                    See More
+                  </button>
                 </div>
               </div>
             </div>

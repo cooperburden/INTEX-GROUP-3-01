@@ -1,4 +1,3 @@
-
 import os
 import sqlite3
 from flask import Flask, jsonify
@@ -11,12 +10,12 @@ CORS(app)
 
 sav_file = os.path.join(os.path.dirname(__file__), "recommender.sav")
 
+# Load recommender.sav (unchanged)
 try:
     df, meta = pyreadstat.read_sav(sav_file)
     print("Raw DataFrame from recommender.sav:")
     print(df.head())
     
-    # Alternative grouping without apply
     recommendations_lookup = {}
     for user_id, user_df in df.groupby('user_id'):
         top_all = user_df[user_df['rec_type'] == 'top_all'][['show_id', 'title', 'match_score']].to_dict('records')
@@ -34,31 +33,23 @@ try:
             "second_genre_name": second_genre_name
         }
     print("Loaded recommender.sav successfully")
-    print(f"Recommendations lookup: {recommendations_lookup}")
-    print(f"Data for user '189': {recommendations_lookup.get('189', 'Not found')}")
 except Exception as e:
     recommendations_lookup = {}
     print("Error loading sav file:", e)
 
-
-# Load content-based recommendations (new)
+# Load content_recommendations.sav (unchanged)
 content_sav_file = os.path.join(os.path.dirname(__file__), "content_recommendations.sav")
 try:
     content_df, content_meta = pyreadstat.read_sav(content_sav_file)
-    print("Raw DataFrame from content_recommendations.sav:")
-    print(content_df.head())
-    
     content_recommendations_lookup = {}
     for show_id, show_df in content_df.groupby('show_id'):
         content_recommendations_lookup[show_id] = show_df[['recommended_show_id', 'recommended_title']].to_dict('records')
     print("Loaded content_recommendations.sav successfully")
-    print(f"Content recommendations lookup: {content_recommendations_lookup}")
-    print(f"Content recommendations for show 's1': {content_recommendations_lookup.get('s1', 'Not found')}")
 except Exception as e:
     content_recommendations_lookup = {}
     print("Error loading content sav file:", e)
 
-
+# Function to get movie details from movies_titles table
 def get_movie_details_by_show_ids(show_ids):
     db_path = os.path.join(os.path.dirname(__file__), "..", "movies.db")
     db_path = os.path.abspath(db_path)
@@ -73,15 +64,31 @@ def get_movie_details_by_show_ids(show_ids):
     connection.close()
     return movies
 
+# New function to calculate average rating from movie_ratings table
+def get_average_rating(show_id):
+    db_path = os.path.join(os.path.dirname(__file__), "..", "movies.db")
+    db_path = os.path.abspath(db_path)
+    connection = sqlite3.connect(db_path)
+    cursor = connection.cursor()
+    query = "SELECT AVG(rating) as avg_rating FROM movies_ratings WHERE show_id = ?"
+    cursor.execute(query, (show_id,))
+    result = cursor.fetchone()
+    connection.close()
+    # Return the average rating if it exists, otherwise default to 3.5
+    return result[0] if result[0] is not None else 3.5
+
+# Updated transform_movie function to include average rating
 def transform_movie(movie, match_score=0.0):
+    show_id = movie.get("show_id")
+    average_rating = get_average_rating(show_id)  # Fetch average rating from movie_ratings
     return {
-        "movieId": movie.get("show_id"),
+        "movieId": show_id,
         "title": movie.get("title"),
         "description": movie.get("description", "No description available"),
         "duration": movie.get("duration", "N/A"),
         "rating": movie.get("rating", "N/A"),
         "year": movie.get("release_year", 0),
-        "averageRating": 3.5,
+        "averageRating": round(average_rating, 1),  # Round to 1 decimal place for readability
         "matchScore": match_score
     }
 
@@ -135,7 +142,7 @@ def recommendations(user_id):
         }
     })
 
-# New endpoint for content-based recommendations
+# Content-based recommendations endpoint (updated similarly)
 @app.route("/api/recommendations/content/<show_id>", methods=["GET"])
 def content_recommendations(show_id):
     show_id_str = str(show_id)
@@ -148,7 +155,6 @@ def content_recommendations(show_id):
             "recommendations": []
         })
     
-    # Get show_ids for the recommended movies
     recommended_show_ids = [rec['recommended_show_id'] for rec in recs]
     print(f"Recommended show IDs to query: {recommended_show_ids}")
     
@@ -159,7 +165,6 @@ def content_recommendations(show_id):
     else:
         movies_dict = {}
     
-    # Transform recommended movies
     recommended_movies = [
         transform_movie(movies_dict.get(rec['recommended_show_id'], {
             'show_id': rec['recommended_show_id'],

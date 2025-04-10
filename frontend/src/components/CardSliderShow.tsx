@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import "../styles/CardSlider.css";
 import { Movie } from "../types/Movie";
 
 interface CardSliderShowProps {
-  showId: string; // Prop to receive showId
+  showId: string;
 }
 
 const CardSliderShow: React.FC<CardSliderShowProps> = ({ showId }) => {
@@ -12,8 +12,12 @@ const CardSliderShow: React.FC<CardSliderShowProps> = ({ showId }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const carouselRef = useRef<HTMLDivElement>(null);
 
-  // Helper function to generate a sanitized image URL from the movie title
+  const visibleCards = 3;
+  const cardWidth = 300;
+  const repeatFactor = 5;
+
   const getSanitizedImageUrl = (title: string): string => {
     const sanitizedTitle = title.trim().replace(/[!\-&$?';<:().]/g, "");
     const finalTitle = sanitizedTitle.replace(/ /g, "%20");
@@ -26,15 +30,14 @@ const CardSliderShow: React.FC<CardSliderShowProps> = ({ showId }) => {
         setLoading(true);
         setError(null);
         const response = await fetch(
-          `http://127.0.0.1:5001/api/recommendations/content/${showId}` // Use the showId prop
+          `http://127.0.0.1:5001/api/recommendations/content/${showId}`
         );
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         const data = await response.json();
-        console.log("API response:", data); // Debug: Check the structure in the console
+        console.log("API response:", data);
 
-        // Ensure recommendations exist and are an array
         if (data.recommendations && Array.isArray(data.recommendations)) {
           setMovies(data.recommendations);
         } else {
@@ -58,26 +61,23 @@ const CardSliderShow: React.FC<CardSliderShowProps> = ({ showId }) => {
       setError("No show ID provided");
       setLoading(false);
     }
-  }, [showId]); // Depend on showId prop
+  }, [showId]);
 
-  // Toggle flip state for a specific card
   const handleCardClick = (index: number) => {
     setFlippedCard(flippedCard === index ? null : index);
   };
 
-  // Function to truncate description
   const truncateDescription = (text: string, maxLength: number) => {
     if (text.length <= maxLength) return text;
     return text.substring(0, maxLength) + "...";
   };
 
   const renderStarRating = (averageRating: string | number) => {
-    // Parse averageRating to a float
     const rating =
       typeof averageRating === "string"
         ? parseFloat(averageRating)
         : averageRating;
-    if (isNaN(rating)) return null; // Handle invalid ratings
+    if (isNaN(rating)) return null;
 
     const fullStars = Math.floor(rating);
     const hasHalfStar = rating % 1 >= 0.5;
@@ -105,18 +105,34 @@ const CardSliderShow: React.FC<CardSliderShowProps> = ({ showId }) => {
   };
 
   const nextSlide = () => {
-    const visibleCards = 3; // You can make this dynamic based on viewport width
-    if (
-      movies.length > visibleCards &&
-      currentIndex < movies.length - visibleCards
-    ) {
-      setCurrentIndex((prev) => prev + 1);
+    if (!carouselRef.current || movies.length === 0) return;
+
+    const totalCards = movies.length * repeatFactor;
+    const newIndex = currentIndex + 1;
+
+    if (newIndex >= totalCards) {
+      setTimeout(() => {
+        if (carouselRef.current) {
+          carouselRef.current.style.transition = "none";
+          setCurrentIndex(0);
+          setTimeout(() => {
+            if (carouselRef.current) {
+              carouselRef.current.style.transition =
+                "transform 0.5s ease-in-out";
+            }
+          }, 0);
+        }
+      }, 500);
+    } else {
+      setCurrentIndex(newIndex);
     }
   };
 
   const prevSlide = () => {
+    if (!carouselRef.current || movies.length === 0) return;
+
     if (currentIndex > 0) {
-      setCurrentIndex((prev) => prev - 1);
+      setCurrentIndex(currentIndex - 1);
     }
   };
 
@@ -138,6 +154,10 @@ const CardSliderShow: React.FC<CardSliderShowProps> = ({ showId }) => {
     );
   }
 
+  const repeatedMovies = Array(repeatFactor)
+    .fill(null)
+    .flatMap(() => movies);
+
   return (
     <div className="card-slider">
       <button onClick={prevSlide} className="carousel-button prev">
@@ -145,17 +165,18 @@ const CardSliderShow: React.FC<CardSliderShowProps> = ({ showId }) => {
       </button>
       <div className="carousel-container">
         <div
+          ref={carouselRef}
           className="carousel-track"
           style={{
-            transform: `translateX(-${currentIndex * 300}px)`,
-            width: `${movies.length * 300}px`,
+            transform: `translateX(-${currentIndex * cardWidth}px)`,
+            width: `${repeatedMovies.length * cardWidth}px`,
           }}
         >
-          {movies.map((movie, index) => (
+          {repeatedMovies.map((movie, index) => (
             <div
-              key={movie.movieId}
-              className={`flip-card-container ${flippedCard === index ? "flipped" : ""}`}
-              onClick={() => handleCardClick(index)}
+              key={`${movie.movieId}-${index}`}
+              className={`flip-card-container ${flippedCard === index % movies.length ? "flipped" : ""}`}
+              onClick={() => handleCardClick(index % movies.length)}
             >
               <div className="flip-card">
                 <div className="card-front">
@@ -178,11 +199,15 @@ const CardSliderShow: React.FC<CardSliderShowProps> = ({ showId }) => {
                   <h3 className="card-title">{movie.title}</h3>
                   <ul className="card-details">
                     <li>
-                      {movie.duration} | {movie.rating} | {movie.year}
+                      {movie.duration || "N/A"} | {movie.rating || "N/A"} |{" "}
+                      {movie.year || "N/A"}
                     </li>
                   </ul>
                   <p className="card-description">
-                    {truncateDescription(movie.description, 200)}
+                    {truncateDescription(
+                      movie.description || "No description",
+                      200
+                    )}
                   </p>
                   <button className="play-button" />
                 </div>
