@@ -1,5 +1,7 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import Footer from "../components/Footer";
+import Header from "../components/Header";
 
 interface UserProfile {
   userId: number;
@@ -40,34 +42,59 @@ const Account = () => {
   if (!profile) return <p>Not authorized to view this page.</p>;
 
   return (
-    <div style={{ padding: "2rem", color: "#fff", backgroundColor: "#111", minHeight: "100vh" }}>
-      <button
-  onClick={() => navigate("/movieList")}
-  style={{
-    marginBottom: "1rem",
-    padding: "0.5rem 1rem",
-    backgroundColor: "#333",
-    color: "white",
-    border: "none",
-    borderRadius: "4px",
-    cursor: "pointer"
-  }}
->
-  ← Back to Movie List
-</button>
+    <>
+      <Header />
+      <div className="container" style={{ paddingTop: "7rem", paddingBottom: "3rem" }}>
+        {/* Back Button aligned to the left */}
+        <div className="row mb-4">
+          <div className="col-12 text-start"> {/* Aligns button to the left */}
+            <button
+              onClick={() => navigate("/movieList")}
+              className="btn btn-danger btn-lg"
+            >
+              ← Back to Movie List
+            </button>
+          </div>
+        </div>
 
-      
-      <h2>Your Account</h2>
-      <p><strong>ID:</strong> {profile.userId}</p>
-      <p><strong>Name:</strong> {profile.name}</p>
-      <p><strong>Email:</strong> {profile.email}</p>
-      <p><strong>Phone:</strong> {profile.phone}</p>
-      <p><strong>Age:</strong> {profile.age}</p>
-      <p><strong>Gender:</strong> {profile.gender}</p>
-      <p><strong>City:</strong> {profile.city}</p>
-      <p><strong>State:</strong> {profile.state}</p>
-      <p><strong>ZIP:</strong> {profile.zip}</p>
-    </div>
+        {/* Profile Info */}
+        <div className="row">
+          <div className="col-12 col-md-8 offset-md-2">
+            <div className="card p-4 shadow-sm">
+              <h2 className="text-center mb-4">Your Account</h2>
+              <div className="mb-3">
+                <strong>ID:</strong> {profile.userId}
+              </div>
+              <div className="mb-3">
+                <strong>Name:</strong> {profile.name}
+              </div>
+              <div className="mb-3">
+                <strong>Email:</strong> {profile.email}
+              </div>
+              <div className="mb-3">
+                <strong>Phone:</strong> {profile.phone}
+              </div>
+              <div className="mb-3">
+                <strong>Age:</strong> {profile.age}
+              </div>
+              <div className="mb-3">
+                <strong>Gender:</strong> {profile.gender}
+              </div>
+              <div className="mb-3">
+                <strong>City:</strong> {profile.city}
+              </div>
+              <div className="mb-3">
+                <strong>State:</strong> {profile.state}
+              </div>
+              <div className="mb-3">
+                <strong>ZIP:</strong> {profile.zip}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <Footer />
+    </>
   );
 };
 
