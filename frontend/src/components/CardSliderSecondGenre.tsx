@@ -2,12 +2,13 @@ import React, { useEffect, useState } from "react";
 import "../styles/CardSlider.css";
 import { Movie } from "../types/Movie";
 
-const CardSliderRec = () => {
+const CardSliderSecondGenre = () => {
   const [movies, setMovies] = useState<Movie[]>([]);
   const [flippedCard, setFlippedCard] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [genreName, setGenreName] = useState<string>(""); // New state for genre name
 
   // Example user ID (replace with dynamic user ID if applicable)
   const userId = "189"; // You can make this dynamic based on your app's logic
@@ -31,7 +32,8 @@ const CardSliderRec = () => {
         const data = await response.json();
         console.log("API response:", data); // Debug: Check the structure in the console
         // Use the correct property name from the response
-        setMovies(data.recommendations.top_all);
+        setMovies(data.recommendations.second_genre);
+        setGenreName(data.recommendations.second_genre_name);
       } catch (err: unknown) {
         setError(
           err instanceof Error ? err.message : "An unknown error occurred"
@@ -102,7 +104,7 @@ const CardSliderRec = () => {
 
   return (
     <div className="card-slider">
-      <h1>Top Picks for You</h1>
+      <h1>Best of {genreName}</h1>
       <button onClick={prevSlide} className="carousel-button prev">
         ❮
       </button>
@@ -161,4 +163,4 @@ const CardSliderRec = () => {
   );
 };
 
-export default CardSliderRec;
+export default CardSliderSecondGenre;

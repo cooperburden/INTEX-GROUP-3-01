@@ -3,6 +3,8 @@ import "../styles/MovieList.css";
 import VideoPlayer from "./VideoPlayer";
 import CardSlider from "./CardSlider";
 import CardSliderRec from "./CardSliderRec";
+import CardSliderFirstGenre from "./CardSliderFirstGenre";
+import CardSliderSecondGenre from "./CardSliderSecondGenre";
 
 function MovieList() {
   return (
@@ -20,10 +22,10 @@ function MovieList() {
           <CardSliderRec /> {/* First carousel */}
         </div>
         <div className="slide-container">
-          <CardSlider /> {/* Second carousel */}
+          <CardSliderFirstGenre /> {/* Second carousel */}
         </div>
         <div className="slide-container">
-          <CardSlider /> {/* Third carousel */}
+          <CardSliderSecondGenre /> {/* Third carousel */}
         </div>
       </div>
     </div>
