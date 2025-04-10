@@ -2,6 +2,7 @@ import Header from "./Header";
 import "../styles/MovieList.css";
 import VideoPlayer from "./VideoPlayer";
 import CardSlider from "./CardSlider";
+import CardSliderRec from "./CardSliderRec";
 
 function MovieList() {
   return (
@@ -16,7 +17,7 @@ function MovieList() {
           <VideoPlayer />
         </div>
         <div className="slide-container">
-          <CardSlider /> {/* First carousel */}
+          <CardSliderRec /> {/* First carousel */}
         </div>
         <div className="slide-container">
           <CardSlider /> {/* Second carousel */}
