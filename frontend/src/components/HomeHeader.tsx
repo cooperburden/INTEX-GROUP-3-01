@@ -25,7 +25,7 @@ function Header() {
           {/* User Icon on the right */}
           <div className="dropdown" style={{ position: "relative", display: "inline-block" }}>
   <img
-    src="../../public/user-icon-white.svg"
+    src="../public/user-icon-white.svg"
     alt="User Icon"
     style={{ width: "50px", height: "60px" }}
   />
