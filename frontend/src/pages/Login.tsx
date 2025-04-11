@@ -24,7 +24,7 @@ const Login: React.FC = () => {
   const loginUser = async (email: string, password: string) => {
     console.log("🔐 Sending login request to /login");
   
-    const response = await fetch('https://localhost:5000/login', {
+    const response = await fetch('https://intexwebapp301-fyaqd3dxdjakcmc5.eastus-01.azurewebsites.net/login', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

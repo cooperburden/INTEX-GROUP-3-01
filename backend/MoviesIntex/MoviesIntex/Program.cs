@@ -73,7 +73,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowFrontend",
         policy =>
         {
-            policy.WithOrigins("http://localhost:3000") // Your React frontend
+            policy.WithOrigins("http://localhost:3000", "https://white-grass-03804941e.6.azurestaticapps.net") // Your React frontend
                 .AllowCredentials()
                 .AllowAnyMethod()
                 .AllowAnyHeader();
