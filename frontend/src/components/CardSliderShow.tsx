@@ -233,7 +233,7 @@ const CardSliderShow: React.FC<CardSliderShowProps> = ({ showId }) => {
                   </p>
                   <button
                     className="btn btn-danger"
-                    onClick={(e) => handleSeeMoreClick(movie.movieId, e)}
+                    onClick={(e) => handleSeeMoreClick(movie.showId, e)}
                     style={{
                       marginTop: "auto",
                       fontSize: "0.8rem",
