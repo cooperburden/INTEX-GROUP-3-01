@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import "../styles/CardSlider.css";
 import { Movie } from "../types/Movie";
 
@@ -12,6 +13,7 @@ const CardSliderShow: React.FC<CardSliderShowProps> = ({ showId }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const navigate = useNavigate();
   const carouselRef = useRef<HTMLDivElement>(null);
 
   // const visibleCards = 3;
@@ -22,6 +24,17 @@ const CardSliderShow: React.FC<CardSliderShowProps> = ({ showId }) => {
     const sanitizedTitle = title.trim().replace(/[!\-&$?';<:().]/g, "");
     const finalTitle = sanitizedTitle.replace(/ /g, "%20");
     return `/${finalTitle}.jpg`;
+  };
+
+  const handleImageError = (
+    e: React.SyntheticEvent<HTMLImageElement, Event>
+  ) => {
+    const img = e.currentTarget;
+    if (img.src !== "/defaultposter.jpg") {
+      // Match filename
+      console.log(`Failed to load image: ${img.src}, switching to default`);
+      img.src = "/defaultposter.jpg";
+    }
   };
 
   useEffect(() => {
@@ -36,7 +49,7 @@ const CardSliderShow: React.FC<CardSliderShowProps> = ({ showId }) => {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         const data = await response.json();
-        console.log("API response:", data);
+        console.log("Full API response:", data);
 
         if (data.recommendations && Array.isArray(data.recommendations)) {
           setMovies(data.recommendations);
@@ -63,8 +76,20 @@ const CardSliderShow: React.FC<CardSliderShowProps> = ({ showId }) => {
     }
   }, [showId]);
 
-  const handleCardClick = (index: number) => {
-    setFlippedCard(flippedCard === index ? null : index);
+  const handleCardClick = (index: number, event: React.MouseEvent) => {
+    const target = event.target as HTMLElement;
+    if (target.closest("button") || target.closest("a")) {
+      return;
+    }
+    setFlippedCard(
+      flippedCard === index % movies.length ? null : index % movies.length
+    );
+  };
+
+  const handleSeeMoreClick = (movieId: string, event: React.MouseEvent) => {
+    event.stopPropagation();
+    console.log("Navigating to:", `/movieDetails/${movieId}`);
+    navigate(`/movieDetails/${movieId}`);
   };
 
   const truncateDescription = (text: string, maxLength: number) => {
@@ -176,7 +201,7 @@ const CardSliderShow: React.FC<CardSliderShowProps> = ({ showId }) => {
             <div
               key={`${movie.showId}-${index}`}
               className={`flip-card-container ${flippedCard === index % movies.length ? "flipped" : ""}`}
-              onClick={() => handleCardClick(index % movies.length)}
+              onClick={(e) => handleCardClick(index % movies.length, e)}
             >
               <div className="flip-card">
                 <div className="card-front">
@@ -185,10 +210,7 @@ const CardSliderShow: React.FC<CardSliderShowProps> = ({ showId }) => {
                     <img
                       src={getSanitizedImageUrl(movie?.title || "default")}
                       alt={movie.title}
-                      onError={(e) =>
-                        (e.currentTarget.src =
-                          "/Movie%20Posters/default-poster.jpg")
-                      }
+                      onError={handleImageError} // Use the new handler
                     />
                     <figcaption>
                       {renderStarRating(movie.averageRating)}
@@ -209,7 +231,17 @@ const CardSliderShow: React.FC<CardSliderShowProps> = ({ showId }) => {
                       200
                     )}
                   </p>
-                  <button className="play-button" />
+                  <button
+                    className="btn btn-danger"
+                    onClick={(e) => handleSeeMoreClick(movie.movieId, e)}
+                    style={{
+                      marginTop: "auto",
+                      fontSize: "0.8rem",
+                      padding: "5px 10px",
+                    }}
+                  >
+                    See More
+                  </button>
                 </div>
               </div>
             </div>

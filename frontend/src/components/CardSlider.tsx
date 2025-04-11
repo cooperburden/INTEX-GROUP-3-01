@@ -174,8 +174,7 @@ const CardSlider: React.FC = () => {
                       src={getSanitizedImageUrl(movie?.title || "Default")}
                       alt={movie.title}
                       onError={(e) =>
-                        (e.currentTarget.src =
-                          "/Movie%20Posters/default-poster.jpg")
+                        (e.currentTarget.src = "/default-poster.jpg")
                       }
                     />
                     <figcaption>

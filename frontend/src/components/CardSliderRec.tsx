@@ -254,8 +254,7 @@ const CardSliderRec: React.FC<CardSliderRecProps> = ({ recType }) => {
                       src={getSanitizedImageUrl(movie?.title || "default")}
                       alt={movie.title}
                       onError={(e) =>
-                        (e.currentTarget.src =
-                          "/Movie%20Posters/default-poster.jpg")
+                        (e.currentTarget.src = "/defaultposter.jpg")
                       }
                     />
                     <figcaption>
