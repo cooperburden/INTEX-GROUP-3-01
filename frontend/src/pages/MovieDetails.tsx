@@ -135,7 +135,7 @@ const MovieDetails = () => {
           <div className="movie-details-content">
             <div className="movie-details-image">
               <img
-                src={getSanitizedImageUrl(selectedMovie.title)}
+                src={getSanitizedImageUrl(selectedMovie?.title || "default")}
                 alt={selectedMovie.title}
                 onError={(e) =>
                   (e.currentTarget.src = "/Movie%20Posters/default-poster.jpg")

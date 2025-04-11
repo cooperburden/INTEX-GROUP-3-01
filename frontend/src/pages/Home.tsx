@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+
 import HomeHeader from "../components/HomeHeader";
 import "../styles/MovieList.css";
 import HomeVideoPlayer from "../components/HomeVideoPlayer";

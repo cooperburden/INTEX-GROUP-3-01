@@ -199,10 +199,7 @@ figcaption {
   left: 12px;
 }
 
-/* .img-bg */
-.img-bg {
-  /* background: hsla(var(--hue), 25%, 10%, 0.5); */
-}
+
 
 .card-front .img-bg {
   clip-path: polygon(0 20%, 100% 40%, 100% 100%, 0 100%);

@@ -12,7 +12,7 @@ const CardSlider: React.FC = () => {
   const navigate = useNavigate();
   const carouselRef = useRef<HTMLDivElement>(null);
 
-  const visibleCards = 3;
+  // const visibleCards = 3;
   const cardWidth = 300;
   const repeatFactor = 5;
 
@@ -171,7 +171,7 @@ const CardSlider: React.FC = () => {
                   <figure>
                     <div className="img-bg"></div>
                     <img
-                      src={getSanitizedImageUrl(movie.title)}
+                      src={getSanitizedImageUrl(movie?.title || "Default")}
                       alt={movie.title}
                       onError={(e) =>
                         (e.currentTarget.src =
@@ -188,7 +188,7 @@ const CardSlider: React.FC = () => {
                   <ul className="card-details">
                     <li>
                       {movie.duration || "N/A"} | {movie.rating || "N/A"} |{" "}
-                      {movie.year || "N/A"}
+                      {movie.releaseYear || "N/A"}
                     </li>
                   </ul>
                   <p className="card-description">

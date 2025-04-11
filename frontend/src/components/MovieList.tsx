@@ -1,11 +1,11 @@
 import Header from "./Header";
 import "../styles/MovieList.css";
 import VideoPlayer from "./VideoPlayer";
-import CardSlider from "./CardSlider";
+
 import CardSliderRec from "./CardSliderRec";
 import Footer from "./Footer";
-import CardSliderFirstGenre from "./CardSliderFirstGenre";
-import CardSliderSecondGenre from "./CardSliderSecondGenre";
+
+
 
 function MovieList() {
   return (

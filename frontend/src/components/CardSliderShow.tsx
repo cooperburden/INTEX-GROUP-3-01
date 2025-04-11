@@ -14,7 +14,7 @@ const CardSliderShow: React.FC<CardSliderShowProps> = ({ showId }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const carouselRef = useRef<HTMLDivElement>(null);
 
-  const visibleCards = 3;
+  // const visibleCards = 3;
   const cardWidth = 300;
   const repeatFactor = 5;
 
@@ -174,7 +174,7 @@ const CardSliderShow: React.FC<CardSliderShowProps> = ({ showId }) => {
         >
           {repeatedMovies.map((movie, index) => (
             <div
-              key={`${movie.movieId}-${index}`}
+              key={`${movie.showId}-${index}`}
               className={`flip-card-container ${flippedCard === index % movies.length ? "flipped" : ""}`}
               onClick={() => handleCardClick(index % movies.length)}
             >
@@ -183,7 +183,7 @@ const CardSliderShow: React.FC<CardSliderShowProps> = ({ showId }) => {
                   <figure>
                     <div className="img-bg"></div>
                     <img
-                      src={getSanitizedImageUrl(movie.title)}
+                      src={getSanitizedImageUrl(movie?.title || "default")}
                       alt={movie.title}
                       onError={(e) =>
                         (e.currentTarget.src =
@@ -200,7 +200,7 @@ const CardSliderShow: React.FC<CardSliderShowProps> = ({ showId }) => {
                   <ul className="card-details">
                     <li>
                       {movie.duration || "N/A"} | {movie.rating || "N/A"} |{" "}
-                      {movie.year || "N/A"}
+                      {movie.releaseYear || "N/A"}
                     </li>
                   </ul>
                   <p className="card-description">

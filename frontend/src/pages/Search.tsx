@@ -140,7 +140,10 @@ const Search = () => {
                       justifyContent: 'space-between',
                     }}
                     onMouseEnter={(e) => (e.currentTarget.style.transform = 'scale(1.05)')}
-                    onMouseLeave={(e) => (e.currentTarget.style.transform = 'scale(1.0)')}
+                    onMouseLeave={(e) => {
+                      const div = e.currentTarget as HTMLDivElement;
+                      div.style.transform = 'scale(1.0)';
+                    }}
                   >
                     <div className="card-body" style={{ padding: '1rem' }}>
                       <h5
