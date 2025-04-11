@@ -100,6 +100,9 @@ var app = builder.Build();
   app.UseSwaggerUI();
 
 
+
+
+
 app.UseRouting(); // ✅ Required before CORS and auth
 
 app.UseCors("AllowFrontend"); // ✅ Enable credentials-safe CORS
