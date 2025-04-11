@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+ import  { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Formik, Field, Form, ErrorMessage } from "formik";
 import * as Yup from "yup";
@@ -133,7 +133,7 @@ const CreateAccountForm = () => {
               required
               style={inputStyle}
             />
-            <ErrorMessage name="name" component="div" style={{ color: 'red' }} />
+            <ErrorMessage name="name" component="div"  />
           </div>
           <div>
             <Field
@@ -143,7 +143,7 @@ const CreateAccountForm = () => {
               required
               style={inputStyle}
             />
-            <ErrorMessage name="phone" component="div" style={{ color: 'red' }} />
+            <ErrorMessage name="phone" component="div"  />
           </div>
           <div>
             <Field
@@ -153,7 +153,7 @@ const CreateAccountForm = () => {
               required
               style={inputStyle}
             />
-            <ErrorMessage name="email" component="div" style={{ color: 'red' }} />
+            <ErrorMessage name="email" component="div"  />
           </div>
           <div>
             <Field
@@ -163,7 +163,7 @@ const CreateAccountForm = () => {
               required
               style={inputStyle}
             />
-            <ErrorMessage name="password" component="div" style={{ color: 'red' }} />
+            <ErrorMessage name="password" component="div" />
           </div>
           <div>
             <Field
@@ -173,7 +173,7 @@ const CreateAccountForm = () => {
               required
               style={inputStyle}
             />
-            <ErrorMessage name="age" component="div" style={{ color: 'red' }} />
+            <ErrorMessage name="age" component="div"  />
           </div>
           <div>
             <Field as="select" name="gender" required style={inputStyle}>
@@ -181,7 +181,7 @@ const CreateAccountForm = () => {
               <option value="Male">Male</option>
               <option value="Female">Female</option>
             </Field>
-            <ErrorMessage name="gender" component="div" style={{ color: 'red' }} />
+            <ErrorMessage name="gender" component="div" />
           </div>
           <div>
             <Field
@@ -191,7 +191,7 @@ const CreateAccountForm = () => {
               required
               style={inputStyle}
             />
-            <ErrorMessage name="city" component="div" style={{ color: 'red' }} />
+            <ErrorMessage name="city" component="div"  />
           </div>
           <div>
             <Field
@@ -205,7 +205,7 @@ const CreateAccountForm = () => {
                 <option key={s} value={s}>{s}</option>
               ))}
             </Field>
-            <ErrorMessage name="state" component="div" style={{ color: 'red' }} />
+            <ErrorMessage name="state" component="div" />
           </div>
           <div>
             <Field
@@ -215,7 +215,7 @@ const CreateAccountForm = () => {
               required
               style={inputStyle}
             />
-            <ErrorMessage name="zip" component="div" style={{ color: 'red' }} />
+            <ErrorMessage name="zip" component="div" />
           </div>
           <button
             type="submit"

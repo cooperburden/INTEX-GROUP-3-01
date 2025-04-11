@@ -1,4 +1,4 @@
-import React from 'react';
+// import React from 'react';
 import CreateAccountForm from "../components/CreateAccountForm";
 import { useNavigate } from "react-router-dom";
 import Footer from "../components/Footer";

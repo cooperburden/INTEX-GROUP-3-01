@@ -18,7 +18,7 @@ const CardSliderRec: React.FC<CardSliderRecProps> = ({ recType }) => {
   const navigate = useNavigate();
   const carouselRef = useRef<HTMLDivElement>(null);
 
-  const visibleCards = 3;
+  // const visibleCards = 3;
   const cardWidth = 300;
   const repeatFactor = 5; // Repeat the list 5 times
 
@@ -242,7 +242,7 @@ const CardSliderRec: React.FC<CardSliderRecProps> = ({ recType }) => {
         >
           {repeatedMovies.map((movie, index) => (
             <div
-              key={`${movie.movieId}-${index}`}
+              key={`${movie.showId}-${index}`}   // we made a change here movieId to showId
               className={`flip-card-container ${flippedCard === index % movies.length ? "flipped" : ""}`}
               onClick={(e) => handleCardClick(index % movies.length, e)}
             >
@@ -251,7 +251,7 @@ const CardSliderRec: React.FC<CardSliderRecProps> = ({ recType }) => {
                   <figure>
                     <div className="img-bg"></div>
                     <img
-                      src={getSanitizedImageUrl(movie.title)}
+                      src={getSanitizedImageUrl(movie?.title || "default")}
                       alt={movie.title}
                       onError={(e) =>
                         (e.currentTarget.src =
@@ -268,7 +268,7 @@ const CardSliderRec: React.FC<CardSliderRecProps> = ({ recType }) => {
                   <ul className="card-details">
                     <li>
                       {movie.duration || "N/A"} | {movie.rating || "N/A"} |{" "}
-                      {movie.year || "N/A"}
+                      {movie.releaseYear || "N/A"}
                     </li>
                   </ul>
                   <p className="card-description">
@@ -279,7 +279,7 @@ const CardSliderRec: React.FC<CardSliderRecProps> = ({ recType }) => {
                   </p>
                   <button
                     className="btn btn-danger"
-                    onClick={(e) => handleSeeMoreClick(movie.movieId, e)}
+                    onClick={(e) => handleSeeMoreClick(movie.showId, e)}
                     style={{
                       marginTop: "auto",
                       fontSize: "0.8rem",
