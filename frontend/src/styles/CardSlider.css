@@ -2,6 +2,11 @@
   box-sizing: border-box;
 }
 
+.btn-danger {
+  position: relative;
+  z-index: 10;
+}
+
 /* Import font */
 @import url("https://fonts.googleapis.com/css?family=Lato");
 /* Import fonts */
