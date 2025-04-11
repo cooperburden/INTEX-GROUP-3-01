@@ -5,7 +5,7 @@ interface FetchMoviesResponse {
   totalNumMovies: number;
 }
 
-const API_URL = 'https://localhost:5000/api/MovieTitles';
+const API_URL = 'https://intexwebapp301-fyaqd3dxdjakcmc5.eastus-01.azurewebsites.net/api/MovieTitles';
 
 // Fetch all movies (no pagination)
 export const fetchAllMovies = async (): Promise<Movie[]> => {
