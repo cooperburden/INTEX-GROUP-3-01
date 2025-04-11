@@ -1,13 +1,10 @@
-
-
 using System.Security.Claims;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using MoviesIntex.Data;
 using MoviesIntex.Services;
 using Microsoft.AspNetCore.Mvc;
-
-
+using System.Diagnostics;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -24,6 +21,17 @@ builder.Services.ConfigureApplicationCookie(options =>
 });
 
 
+void RunCheckPickleScript()
+{
+    // Set up the process start info for Python script execution
+    ProcessStartInfo start = new ProcessStartInfo();
+    start.FileName = "python"; // Make sure Python is available in your PATH
+    start.Arguments = "checkpickle.py"; // Set the correct path to your checkpickle.py
+    start.WorkingDirectory = "Models"; // Optional: set working directory if needed
+
+    Process process = Process.Start(start);
+}
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -35,9 +43,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 builder.Services.AddAuthorization();
 
-
 builder.Services.AddScoped<UserMigrationService>();
-
 
 builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
     {
@@ -52,9 +58,6 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
     })
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders();
-
-
-
 
 builder.Services.Configure<IdentityOptions>(options =>
 {
@@ -92,7 +95,6 @@ app.Use(async (context, next) =>
     await next();
 });
 
-
 // Dev tools
 if (app.Environment.IsDevelopment())
 {
@@ -107,7 +109,6 @@ app.UseAuthorization();
 
 app.MapControllers();
 app.MapRazorPages();
-
 
 // 👇 Logout endpoint
 app.MapPost("/logout", async (HttpContext context, SignInManager<IdentityUser> signInManager) =>
@@ -134,7 +135,6 @@ app.MapGet("/test-csp", () =>
     return Results.Text("<html><head></head><body><h1>Hello CSP</h1></body></html>", "text/html");
 });
 
-
 app.MapPost("/login", async (
     SignInManager<IdentityUser> signInManager,
     UserManager<IdentityUser> userManager,
@@ -160,9 +160,6 @@ app.MapPost("/login", async (
     return Results.Unauthorized();
 });
 
-
-
-
 // Run the user migration on startup
 using (var scope = app.Services.CreateScope())
 {
@@ -170,8 +167,7 @@ using (var scope = app.Services.CreateScope())
     await userMigrationService.MigrateUsersAsync(); // This will run the migration
 }
 
+// Run the Python script to start the recommendation models
+RunCheckPickleScript(); // This will execute the Python script before the app fully runs
 
-
-
-
-app.Run();
+app.Run(); // Start the application
