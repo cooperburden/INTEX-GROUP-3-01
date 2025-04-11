@@ -1,7 +1,19 @@
 {
   "compilerOptions": {
-    "noEmitOnError": false
+    "target": "esnext",                             // Compile to the latest JavaScript version
+    "lib": ["dom", "esnext"],                       // Add 'dom' for DOM-related features
+    "strict": true,                                 // Enable strict type-checking options
+    "esModuleInterop": true,                        // For compatibility with CommonJS modules
+    "moduleResolution": "node",                     // Module resolution strategy for Node.js modules
+    "allowSyntheticDefaultImports": true,           // Allow synthetic default imports
+    "skipLibCheck": true,                           // Skip library type checks for faster builds
+    "noEmitOnError": false,                         // Allow emitting files even when there are errors
+    "noImplicitAny": true,                          // Ensure that variables have an explicit type
+    "resolveJsonModule": true                       // Allow importing JSON files as modules
   },
+  "include": [
+    "src/**/*"                                      // Include all TypeScript files in the src directory
+  ],
   "files": [],
   "references": [
     { "path": "./tsconfig.app.json" },
