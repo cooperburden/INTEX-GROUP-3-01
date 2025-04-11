@@ -30,7 +30,7 @@ const CardSliderShow: React.FC<CardSliderShowProps> = ({ showId }) => {
         setLoading(true);
         setError(null);
         const response = await fetch(
-          `http://127.0.0.1:5001/api/recommendations/content/${showId}`
+          `https://railway-production-e21b.up.railway.app/api/recommendations/content/${showId}`
         );
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
