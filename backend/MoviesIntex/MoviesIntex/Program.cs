@@ -5,6 +5,10 @@ using MoviesIntex.Data;
 using MoviesIntex.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
+using Microsoft.AspNetCore.Cors.Infrastructure;
+using Microsoft.AspNetCore.Builder;
+
+
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -73,10 +77,11 @@ builder.Services.AddCors(options =>
        options.AddPolicy("AllowFrontend",
            policy =>
            {
-               policy.WithOrigins("https://white-grass-03804941e.6.azurestaticapps.net") // Your React frontend
+               policy.WithOrigins("https://delightful-smoke-0d2ce2e1e.6.azurestaticapps.net", "http://localhost:3000", "https://localhost:3000") // Your React frontend
                    .AllowCredentials()
                    .AllowAnyMethod()
-                   .AllowAnyHeader();
+                   .AllowAnyHeader()
+                   .WithExposedHeaders("Set-Cookie"); // 👈 Needed for cookies
            });
    });
 
