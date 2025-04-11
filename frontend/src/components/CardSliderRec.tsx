@@ -62,7 +62,7 @@ const CardSliderRec: React.FC<CardSliderRecProps> = ({ recType }) => {
         setLoading(true);
         setError(null);
         const response = await fetch(
-          `https://intexwebapp301v2-auhkc9f2htgtachk.eastus-01.azurewebsites.net/api/recommender/${userId}`
+          `https://railway-production-e21b.up.railway.app/api/recommendations/${userId}`
         );
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);

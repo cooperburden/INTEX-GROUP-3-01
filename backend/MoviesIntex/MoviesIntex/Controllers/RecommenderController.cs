@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics;
+using System.Net.Http;
+using System.Threading.Tasks;
+using System;
 
 namespace MoviesIntex.Controllers
 {
@@ -8,42 +10,31 @@ namespace MoviesIntex.Controllers
     public class RecommenderController : ControllerBase
     {
         [HttpGet("{userId}")]
-        public IActionResult GetRecommendations(int userId)
+        public IActionResult GetRecommendations(string userId)
         {
-            var scriptPath = "Models/checkpickle.py"; // adjust path if needed
-            var pythonExecutable = "python3"; // or "python" on Windows
-
-            var startInfo = new ProcessStartInfo
-            {
-                FileName = pythonExecutable,
-                Arguments = $"{scriptPath} {userId}",
-                RedirectStandardOutput = true,
-                RedirectStandardError = true,
-                UseShellExecute = false,
-                CreateNoWindow = true
-            };
-
             try
             {
-                using var process = new Process();
-                process.StartInfo = startInfo;
-                process.Start();
+                var url = $"http://127.0.0.1:5001/api/recommendations/{userId}";
+                Console.WriteLine($"[INFO] Sending request to: {url}");
 
-                string output = process.StandardOutput.ReadToEnd();
-                string error = process.StandardError.ReadToEnd();
+                var client = new HttpClient();
+                var response = client.GetAsync(url).Result;
 
-                process.WaitForExit();
-
-                if (!string.IsNullOrEmpty(error))
+                if (!response.IsSuccessStatusCode)
                 {
-                    return StatusCode(500, new { message = "Python error", error });
+                    var error = response.Content.ReadAsStringAsync().Result;
+                    Console.WriteLine($"[ERROR] Python API error — Status: {(int)response.StatusCode}, Body: {error}");
+                    return StatusCode(500, new { message = "Python API error", error });
                 }
 
-                return Ok(output);
+                var content = response.Content.ReadAsStringAsync().Result;
+                Console.WriteLine($"[SUCCESS] Python API response received for user {userId}");
+                return Content(content, "application/json");
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { message = "Server error", exception = ex.Message });
+                Console.WriteLine($"[FATAL] Internal server error — Exception: {ex.Message}");
+                return StatusCode(500, new { message = "Internal server error", error = ex.Message });
             }
         }
     }
