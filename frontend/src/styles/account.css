@@ -1,0 +1,100 @@
+/* Reset body and html styles */
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow-x: hidden; /* Prevent horizontal scrolling */
+  }
+  
+  /* Ensure #root spans the full height and width */
+  #root {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+  }
+  
+  /* Container takes up the full width and height */
+  .container {
+    padding: 2rem;
+    background-color: #111;
+    min-height: 100vh;
+    width: 100%;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-sizing: border-box; /* Ensure padding doesn't affect width */
+  }
+  
+  /* Back button styling */
+  .backButton {
+    margin-bottom: 2rem;
+    padding: 0.7rem 1.5rem;
+    background-color: #333;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+  }
+  
+  .backButton:hover {
+    background-color: #900;
+    transform: scale(1.05);
+  }
+  
+  /* Profile card styling */
+  .profileCard {
+    background-color: #222;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+    width: 100%;
+    max-width: 600px;
+    margin-top: 2rem;
+  }
+  
+  /* Title styling */
+  .title {
+    font-size: 2.2rem;
+    color: #fff; /* White for the title */
+    margin-bottom: 1.5rem;
+    text-align: center;
+  }
+  
+  /* Profile details styling */
+  .profileDetails {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: #ccc;
+  }
+  
+  /* Info row styling */
+  .infoRow {
+    padding: 0.8rem 0;
+    border-bottom: 1px solid #444;
+  }
+  
+  /* Back button styling */
+.backButton {
+    margin-bottom: 2rem;
+    padding: 0.7rem 1.5rem;
+    background-color: #333;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    padding-top: 2rem; /* Adjust this value as needed */
+  }
+  
+  .backButton:hover {
+    background-color: #900;
+    transform: scale(1.05);
+  }
+  
