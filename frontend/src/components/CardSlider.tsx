@@ -26,7 +26,7 @@ const CardSlider: React.FC = () => {
     const fetchMovies = async () => {
       try {
         setLoading(true);
-        const response = await fetch("https://localhost:5000/api/MovieTitles");
+        const response = await fetch("https://intexwebapp301-fyaqd3dxdjakcmc5.eastus-01.azurewebsites.net/api/MovieTitles");
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }

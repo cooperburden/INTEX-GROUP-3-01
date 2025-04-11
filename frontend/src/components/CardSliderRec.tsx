@@ -32,7 +32,7 @@ const CardSliderRec: React.FC<CardSliderRecProps> = ({ recType }) => {
   useEffect(() => {
     const fetchUserId = async () => {
       try {
-        const response = await fetch("https://localhost:5000/api/Users/me", {
+        const response = await fetch("https://intexwebapp301-fyaqd3dxdjakcmc5.eastus-01.azurewebsites.net/api/Users/me", {
           credentials: "include",
         });
         if (!response.ok) {
