@@ -56,6 +56,32 @@ namespace MoviesIntex.Controllers
 
             return Ok(user);
         }
+        
+        
+        [HttpPost("login")]
+        public async Task<IActionResult> Login([FromBody] LoginDto loginData, [FromServices] SignInManager<IdentityUser> signInManager)
+        {
+            Console.WriteLine("🔥 /api/users/login endpoint hit");
+
+            var user = await _userManager.FindByEmailAsync(loginData.Email);
+            if (user == null)
+            {
+                Console.WriteLine("⚠️ User not found");
+                return Unauthorized();
+            }
+
+            var result = await signInManager.PasswordSignInAsync(user, loginData.Password, isPersistent: false, lockoutOnFailure: false);
+
+            if (result.Succeeded)
+            {
+                Console.WriteLine("✅ Login successful");
+                return Ok(new { Message = "Login successful" });
+            }
+
+            Console.WriteLine("❌ Login failed");
+            return Unauthorized();
+        }
+        
 
         // AddUser endpoint for adding a user to the MovieUsers table (not related to Identity)
         [HttpPost("AddUser")]

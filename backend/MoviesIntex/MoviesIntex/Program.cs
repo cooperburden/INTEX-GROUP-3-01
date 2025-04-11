@@ -69,31 +69,31 @@ builder.Services.Configure<IdentityOptions>(options =>
 builder.Services.AddScoped<IUserClaimsPrincipalFactory<IdentityUser>, CustomUserClaimsPrincipalFactory>();
 
 builder.Services.AddCors(options =>
-{
-    options.AddPolicy("AllowFrontend",
-        policy =>
-        {
-            policy.WithOrigins("http://localhost:3000", "https://white-grass-03804941e.6.azurestaticapps.net") // Your React frontend
-                .AllowCredentials()
-                .AllowAnyMethod()
-                .AllowAnyHeader();
-        });
-});
+   {
+       options.AddPolicy("AllowFrontend",
+           policy =>
+           {
+               policy.WithOrigins("http://localhost:3000", "https://white-grass-03804941e.6.azurestaticapps.net") // Your React frontend
+                   .AllowCredentials()
+                   .AllowAnyMethod()
+                   .AllowAnyHeader();
+           });
+   });
 
 var app = builder.Build();
 
-app.Use(async (context, next) =>
-{
-    context.Response.Headers.Append("Content-Security-Policy",
-        "default-src 'self'; " +
-        "script-src 'self' https://trusted.cdn.com 'unsafe-inline'; " +
-        "style-src 'self' https://trusted.cdn.com 'unsafe-inline'; " +
-        "img-src 'self' data: https://trusted.image-host.com; " +
-        "font-src 'self' https://trusted.font-cdn.com; " +
-        "connect-src 'self' https://localhost:5000 http://localhost:3000 http://localhost:4000");
+// app.Use(async (context, next) =>
+//{
+  //  context.Response.Headers.Append("Content-Security-Policy",
+    //    "default-src 'self'; " +
+      //  "script-src 'self' https://trusted.cdn.com 'unsafe-inline'; " +
+        //"style-src 'self' https://trusted.cdn.com 'unsafe-inline'; " +
+    //    "img-src 'self' data: https://trusted.image-host.com; " +
+      //  "font-src 'self' https://trusted.font-cdn.com; " +
+        //"connect-src 'self' https://localhost:5000 http://localhost:3000 http://localhost:4000");
 
-    await next();
-});
+  //  await next();
+//});
 
 // Dev tools
 if (app.Environment.IsDevelopment())
@@ -102,10 +102,14 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseCors("AllowFrontend");
-app.UseHttpsRedirection();
-app.UseAuthentication(); // 👈 Add this!
+app.UseRouting(); // ✅ Required before CORS and auth
+
+app.UseCors("AllowFrontend"); // ✅ Enable credentials-safe CORS
+
+app.UseAuthentication(); // ✅ Must follow CORS
 app.UseAuthorization();
+
+app.UseHttpsRedirection();
 
 app.MapControllers();
 app.MapRazorPages();
