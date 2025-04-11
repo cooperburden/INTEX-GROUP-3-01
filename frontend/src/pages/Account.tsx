@@ -21,7 +21,7 @@ const Account = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch("https://localhost:5000/api/Users/me", {
+    fetch("https://intexwebapp301-fyaqd3dxdjakcmc5.eastus-01.azurewebsites.net/api/Users/me", {
       credentials: "include",
     })
       .then((res) => {

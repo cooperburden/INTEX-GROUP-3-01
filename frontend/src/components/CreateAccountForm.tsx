@@ -61,7 +61,7 @@ const CreateAccountForm = () => {
 
         try {
           // Step 1: Register with Identity
-          const registerResponse = await fetch("https://localhost:5000/api/Users/register", {
+          const registerResponse = await fetch("https://intexwebapp301-fyaqd3dxdjakcmc5.eastus-01.azurewebsites.net/api/Users/register", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
@@ -79,7 +79,7 @@ const CreateAccountForm = () => {
           console.log("✅ Identity user registered");
 
           // Step 2: Add profile to movies_users
-          const profileResponse = await fetch("https://localhost:5000/api/Users/AddUser", {
+          const profileResponse = await fetch("https://intexwebapp301-fyaqd3dxdjakcmc5.eastus-01.azurewebsites.net/api/Users/AddUser", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",

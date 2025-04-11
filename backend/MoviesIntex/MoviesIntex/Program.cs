@@ -73,7 +73,7 @@ builder.Services.AddCors(options =>
        options.AddPolicy("AllowFrontend",
            policy =>
            {
-               policy.WithOrigins("http://localhost:3000", "https://white-grass-03804941e.6.azurestaticapps.net") // Your React frontend
+               policy.WithOrigins("https://white-grass-03804941e.6.azurestaticapps.net") // Your React frontend
                    .AllowCredentials()
                    .AllowAnyMethod()
                    .AllowAnyHeader();
@@ -96,11 +96,9 @@ var app = builder.Build();
 //});
 
 // Dev tools
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+  app.UseSwagger();
+  app.UseSwaggerUI();
+
 
 app.UseRouting(); // ✅ Required before CORS and auth
 
@@ -139,30 +137,18 @@ app.MapGet("/test-csp", () =>
     return Results.Text("<html><head></head><body><h1>Hello CSP</h1></body></html>", "text/html");
 });
 
-app.MapPost("/login", async (
-    SignInManager<IdentityUser> signInManager,
-    UserManager<IdentityUser> userManager,
-    HttpContext context,
-    [FromBody] MoviesIntex.Data.LoginDto loginData
-) =>
-{
-    Console.WriteLine("🔥 /login endpoint hit");
-    
-    var user = await userManager.FindByEmailAsync(loginData.Email);
-    if (user == null)
-    {
-        return Results.Unauthorized();
-    }
 
-    var result = await signInManager.PasswordSignInAsync(user, loginData.Password, isPersistent: false, lockoutOnFailure: false);
 
-    if (result.Succeeded)
-    {
-        return Results.Ok();
-    }
 
-    return Results.Unauthorized();
-});
+
+
+
+
+
+
+
+
+
 
 // Run the user migration on startup
 using (var scope = app.Services.CreateScope())
